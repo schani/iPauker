@@ -108,9 +108,14 @@ class Upload(webapp.RequestHandler):
         p.Parse(self.request.get('data'), 1);
 
         db.put(self.cards)
+        self.cards = None
 
+        self.redirect('/list')
+
+class List(webapp.RequestHandler):
+    def get(self):
         self.cards = Card.all()
-        self.response.out.write('<html><body>You wrote:<pre>')
+        self.response.out.write('<html><body><pre>')
         for card in self.cards:
             self.response.out.write('%s   %d   %s   %s   %d   %s\n' % (card.front_text, card.front_batch, card.front_timestamp, card.reverse_text, card.reverse_batch, card.reverse_timestamp))
         #self.response.out.write(cgi.escape(self.request.get('data')))
@@ -118,7 +123,8 @@ class Upload(webapp.RequestHandler):
 
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
-                                      ('/upload', Upload)],
+                                      ('/upload', Upload),
+                                      ('/list', List)],
                                      debug=True)
 
 def main():
