@@ -5,15 +5,12 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-class CardSide:
-    def __init__(self, text, batch):
-        self.text = text
-        self.batch = batch
-
 class Card:
-    def __init__(self, front, reverse):
-        self.front = front
-        self.reverse = reverse
+    def __init__(self, front_text, front_batch, reverse_text, reverse_batch):
+        self.front_text = front_text
+        self.front_batch = front_batch
+        self.reverse_text = reverse_text
+        self.reverse_batch = reverse_batch
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -37,8 +34,9 @@ class Upload(webapp.RequestHandler):
     state = TOP_LEVEL
     batch = -2
     cards = []
-    front = None
-    reverse = None
+    front_text = None
+    reverse_text = None
+    reverse_batch = None
     text = None
 
     def start_element(self, name, attrs):
@@ -49,9 +47,14 @@ class Upload(webapp.RequestHandler):
             self.back = None
             self.state = IN_CARD
         elif self.state == IN_CARD and name == 'FrontSide':
+            self.front_batch = self.batch
             self.text = ''
             self.state = IN_SIDE
         elif self.state == IN_CARD and name == 'ReverseSide':
+            if attrs.has_key('Batch'):
+                self.reverse_batch = int(attrs['Batch'])
+            else:
+                self.reverse_batch = -2
             self.text = ''
             self.state = IN_SIDE
         elif self.state == IN_SIDE and name == 'Text':
@@ -63,13 +66,13 @@ class Upload(webapp.RequestHandler):
             self.batch = self.batch + 1
             self.state = TOP_LEVEL
         elif self.state == IN_CARD and name == 'Card':
-            self.cards.append(Card(self.front, self.reverse))
+            self.cards.append(Card(self.front_text, self.front_batch, self.reverse_text, self.reverse_batch))
             self.state = IN_BATCH
         elif self.state == IN_SIDE and name == 'FrontSide':
-            self.front = CardSide(self.text, self.batch)
+            self.front_text = self.text
             self.state = IN_CARD
         elif self.state == IN_SIDE and name == 'ReverseSide':
-            self.reverse = CardSide(self.text, self.batch)
+            self.reverse_text = self.text
             self.state = IN_CARD
         elif self.state == IN_TEXT and name == 'Text':
             self.state = IN_SIDE
@@ -89,7 +92,7 @@ class Upload(webapp.RequestHandler):
 
         self.response.out.write('<html><body>You wrote:<pre>')
         for card in self.cards:
-            self.response.out.write('%s   %d   %s   %d\n' % (card.front.text, card.front.batch, card.reverse.text, card.reverse.batch))
+            self.response.out.write('%s   %d   %s   %d\n' % (card.front_text, card.front_batch, card.reverse_text, card.reverse_batch))
         #self.response.out.write(cgi.escape(self.request.get('data')))
         self.response.out.write('</pre></body></html>')
 
