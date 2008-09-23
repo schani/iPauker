@@ -32,7 +32,7 @@ IN_CARD = 2
 IN_SIDE = 3
 IN_TEXT = 4
 
-class Upload(webapp.RequestHandler):
+class PaukerParser:
     state = TOP_LEVEL
     batch = -2
     cards = []
@@ -99,17 +99,21 @@ class Upload(webapp.RequestHandler):
         if self.state == IN_TEXT:
             self.text = self.text + data
 
-    def post(self):
+    def parse(self, data):
         p = xml.parsers.expat.ParserCreate()
         p.StartElementHandler = self.start_element
         p.EndElementHandler = self.end_element
         p.CharacterDataHandler = self.char_data
 
-        p.Parse(self.request.get('data'), 1);
+        p.Parse(data, 1);
 
-        db.put(self.cards)
-        self.cards = None
+        return self.cards
 
+class Upload(webapp.RequestHandler):
+    def post(self):
+        p = PaukerParser()
+        cards = p.parse(self.request.get('data'))
+        db.put(cards)
         self.redirect('/list')
 
 class List(webapp.RequestHandler):
