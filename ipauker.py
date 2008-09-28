@@ -8,11 +8,11 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 class Card(db.Model):
-    front_text = db.StringProperty(multiline=True)
-    front_batch = db.IntegerProperty()
+    front_text = db.TextProperty()
+    front_batch = db.IntegerProperty(required=True)
     front_timestamp = db.IntegerProperty()
-    reverse_text = db.StringProperty(multiline=True)
-    reverse_batch = db.IntegerProperty()
+    reverse_text = db.TextProperty()
+    reverse_batch = db.IntegerProperty(required=True)
     reverse_timestamp = db.IntegerProperty()
 
 class MainPage(webapp.RequestHandler):
@@ -79,10 +79,10 @@ class PaukerParser:
             self.batch = self.batch + 1
             self.state = TOP_LEVEL
         elif self.state == IN_CARD and name == 'Card':
-            self.cards.append(Card(front_text = self.front_text,
+            self.cards.append(Card(front_text = db.Text(self.front_text),
                                    front_batch = self.front_batch,
                                    front_timestamp = self.front_timestamp,
-                                   reverse_text = self.reverse_text,
+                                   reverse_text = db.Text(self.reverse_text),
                                    reverse_batch = self.reverse_batch,
                                    reverse_timestamp = self.reverse_timestamp))
             self.state = IN_BATCH
