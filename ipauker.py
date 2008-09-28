@@ -15,12 +15,35 @@ class Lession(db.Model):
 
 class Card(db.Model):
     lession = db.ReferenceProperty(Lession, required=True)
+    version = db.IntegerProperty(required=True)
+    deleted = db.BooleanProperty(required=True)
     front_text = db.TextProperty()
     front_batch = db.IntegerProperty(required=True)
     front_timestamp = db.IntegerProperty()
     reverse_text = db.TextProperty()
     reverse_batch = db.IntegerProperty(required=True)
     reverse_timestamp = db.IntegerProperty()
+
+    def hash_key(self):
+        return (self.front_text, self.reverse_text)
+
+    def equals(self, other):
+        return self.front_text == other.front_text and \
+               self.front_batch == other.front_batch and \
+               self.front_timestamp == other.front_timestamp and \
+               self.reverse_text == other.reverse_text and \
+               self.reverse_batch == other.reverse_batch and \
+               self.reverse_timestamp == other.reverse_timestamp
+
+    def take_values_from(self, other):
+        self.version = other.version
+        self.deleted = other.deleted
+        self.front_text = other.front_text
+        self.front_batch = other.front_batch
+        self.front_timestamp = other.front_timestamp
+        self.reverse_text = other.reverse_text
+        self.reverse_batch = other.reverse_batch
+        self.reverse_timestamp = other.reverse_timestamp
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -46,17 +69,16 @@ IN_SIDE = 3
 IN_TEXT = 4
 
 class PaukerParser:
-    state = TOP_LEVEL
-    batch = -2
-    cards = []
-    front_text = None
-    front_timestamp = None
-    reverse_text = None
-    reverse_batch = None
-    reverse_timestamp = None
-    text = None
-
     def __init__(self, lession):
+        self.state = TOP_LEVEL
+        self.batch = -2
+        self.cards = []
+        self.front_text = None
+        self.front_timestamp = None
+        self.reverse_text = None
+        self.reverse_batch = None
+        self.reverse_timestamp = None
+        self.text = None
         self.lession = lession
 
     def start_element(self, name, attrs):
@@ -95,6 +117,8 @@ class PaukerParser:
             self.state = TOP_LEVEL
         elif self.state == IN_CARD and name == 'Card':
             self.cards.append(Card(lession = self.lession,
+                                   version = self.lession.version,
+                                   deleted = False,
                                    front_text = db.Text(self.front_text),
                                    front_batch = self.front_batch,
                                    front_timestamp = self.front_timestamp,
@@ -137,16 +161,60 @@ def get_lession(user, lession_name, create):
     else:
         return lessions[0]
 
+def make_diff(version, old_cards, new_cards):
+    old_cards_hash = {}
+    new_cards_hash = {}
+    diff_cards = []
+    touched_cards = {}
+    for card in old_cards:
+        old_cards_hash[card.hash_key()] = card
+    for card in new_cards:
+        # ignore duplicate cards
+        if new_cards_hash.has_key(card.hash_key()):
+            continue
+        new_cards_hash[card.hash_key()] = True
+        if old_cards_hash.has_key(card.hash_key()):
+            old_card = old_cards_hash[card.hash_key()]
+            if not card.equals(old_card):
+                old_card.take_values_from(card)
+                old_card.version = version
+                diff_cards.append(old_card)
+            elif old_card.deleted:
+                old_card.deleted = False
+                old_card.version = version
+                diff_cards.append(old_card)
+            touched_cards[old_card.hash_key()] = True
+        else:
+            diff_cards.append(card)
+    for card in old_cards:
+        if (not card.deleted) and (not touched_cards.has_key(card.hash_key())):
+            card.deleted = True
+            card.version = version
+            diff_cards.append(card)
+    return diff_cards
+
 class Upload(webapp.RequestHandler):
     def post(self):
         user = users.get_current_user()
         lession_name = self.request.get('lession')
         if user and lession_name:
             lession = get_lession(user, lession_name, True)
+            lession.version = lession.version + 1
+
             p = PaukerParser(lession)
-            cards = p.parse(self.request.get('data'))
-            db.put(cards)
-            self.redirect('/list?lession=%s' % urllib.quote(lession_name))
+            new_cards = p.parse(self.request.get('data'))
+
+            current_cards = lession.card_set
+
+            diff_cards = make_diff(lession.version, current_cards, new_cards)
+
+            self.response.out.write('<html><body><pre>')
+            for card in diff_cards:
+                self.response.out.write('%s    %s    %d   %s\n' % (card.front_text, card.reverse_text, card.version, card.deleted))
+            self.response.out.write('</pre></body></html>')
+
+            db.put(lession)
+            db.put(diff_cards)
         else:
             self.redirect(users.create_login_url('/'))
 
@@ -156,17 +224,25 @@ class List(webapp.RequestHandler):
         lession_name = self.request.get('lession')
         if user and lession_name:
             lession = get_lession(user, lession_name, False)
+            diff_version = int(self.request.get('version'))
             self.response.headers['Content-Type'] = 'text/xml'
             if lession:
-                self.cards = Card.gql("WHERE lession = :lession", lession=lession).fetch(99999)
+                cards = Card.gql("WHERE lession = :lession AND version > :version", lession=lession, version=diff_version)
                 self.response.out.write('<cards version="0.1">\n')
-                for card in self.cards:
-                    self.response.out.write('<card>\n')
-                    self.response.out.write('<front batch="%s" timestamp="%s">%s</front>\n' % \
-                                            (card.front_batch, card.front_timestamp, saxutils.escape(card.front_text)))
-                    self.response.out.write('<reverse batch="%s" timestamp="%s">%s</reverse>\n' % \
-                                            (card.reverse_batch, card.reverse_timestamp, saxutils.escape(card.reverse_text)))
-                    self.response.out.write('</card>\n')
+                for card in cards:
+                    if card.deleted:
+                        self.response.out.write('<card deleted="True"><front>%s</front><reverse>%s</reverse></card>\n' % \
+                                                (saxutils.escape(card.front_text),
+                                                 saxutils.escape(card.reverse_text)))
+                    else:
+                        self.response.out.write('<card>\n')
+                        self.response.out.write('<front batch="%s" timestamp="%s">%s</front>\n' % \
+                                                (card.front_batch, card.front_timestamp,
+                                                 saxutils.escape(card.front_text)))
+                        self.response.out.write('<reverse batch="%s" timestamp="%s">%s</reverse>\n' % \
+                                                (card.reverse_batch, card.reverse_timestamp,
+                                                 saxutils.escape(card.reverse_text)))
+                        self.response.out.write('</card>\n')
                 self.response.out.write('</cards>\n')
             else:
                 self.response.out.write('<cards version="0.1"></cards>\n')
@@ -177,6 +253,7 @@ class List(webapp.RequestHandler):
                 <body>
                 <form action="/list" method="get">
                 <div>Lession: <input type="text" name="lession"></div>
+                <div>Version: <input type="text" name="version"></div>
                 <div><input type="submit" value="Show"></div>
                 </form>
                 </body>
@@ -192,8 +269,7 @@ class Lessions(webapp.RequestHandler):
             self.response.out.write('%s   %s   %d\n' % (lession.name, lession.owner, lession.version))
         self.response.out.write('</pre></body></html>')
 
-application = webapp.WSGIApplication(
-                                     [('/', MainPage),
+application = webapp.WSGIApplication([('/', MainPage),
                                       ('/upload', Upload),
                                       ('/list', List),
                                       ('/lessions', Lessions)],
