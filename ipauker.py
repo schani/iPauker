@@ -1,5 +1,6 @@
 import cgi
 import xml.parsers.expat
+from xml.sax import saxutils
 
 from google.appengine.api import users
 from google.appengine.ext import webapp
@@ -119,11 +120,16 @@ class Upload(webapp.RequestHandler):
 class List(webapp.RequestHandler):
     def get(self):
         self.cards = Card.all()
-        self.response.out.write('<html><body><pre>')
+        self.response.headers['Content-Type'] = 'text/xml'
+        self.response.out.write('<cards version="0.1">\n')
         for card in self.cards:
-            self.response.out.write('%s   %d   %s   %s   %d   %s\n' % (card.front_text, card.front_batch, card.front_timestamp, card.reverse_text, card.reverse_batch, card.reverse_timestamp))
-        #self.response.out.write(cgi.escape(self.request.get('data')))
-        self.response.out.write('</pre></body></html>')
+            self.response.out.write('<card>\n')
+            self.response.out.write('<front batch="%s" timestamp="%s">%s</front>\n' % \
+                                    (card.front_batch, card.front_timestamp, saxutils.escape(card.front_text)))
+            self.response.out.write('<reverse batch="%s" timestamp="%s">%s</reverse>\n' % \
+                                    (card.reverse_batch, card.reverse_timestamp, saxutils.escape(card.reverse_text)))
+            self.response.out.write('</card>\n')
+        self.response.out.write('</cards>\n')
 
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
