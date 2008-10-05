@@ -52,11 +52,10 @@ class MainPage(webapp.RequestHandler):
             self.response.out.write("""
             <html>
             <body>
-            <form action="/upload" enctype="multipart/form-data" method="post">
-            <div>Lession: <input type="text" name="lession"></div>
-            <div>Pauker file: <input type="file" name="data" size="40"></div>
-            <div><input type="submit" value="Upload"></div>
-            </form>
+            <p><a href="/upload">Upload</a></p>
+            <p><a href="/list">List</a></p>
+            <p><a href="/dump">Dump</a></p>
+            <p><a href="/lessions">Lessions</a></p>
             </body>
             </html>""")
         else:
@@ -193,73 +192,152 @@ def make_diff(version, old_cards, new_cards):
             diff_cards.append(card)
     return diff_cards
 
-class Upload(webapp.RequestHandler):
+class LessionRequestHandler(webapp.RequestHandler):
+    def get(self):
+        self.postNoLession()
+
     def post(self):
         user = users.get_current_user()
         lession_name = self.request.get('lession')
         if user and lession_name:
-            lession = get_lession(user, lession_name, True)
-            lession.version = lession.version + 1
-
-            p = PaukerParser(lession)
-            new_cards = p.parse(self.request.get('data'))
-
-            current_cards = lession.card_set
-
-            diff_cards = make_diff(lession.version, current_cards, new_cards)
-
-            self.response.out.write('<html><body><pre>')
-            for card in diff_cards:
-                self.response.out.write('%s    %s    %d   %s\n' % (card.front_text, card.reverse_text, card.version, card.deleted))
-            self.response.out.write('</pre></body></html>')
-
-            db.put(lession)
-            db.put(diff_cards)
+            self.postWithUserAndLession(user, lession_name)
+        elif user:
+            self.postNoLession()
         else:
-            self.redirect(users.create_login_url('/'))
+            self.redirect(users.create_login_url(self.request.uri))
 
-class List(webapp.RequestHandler):
-    def get(self):
-        user = users.get_current_user()
-        lession_name = self.request.get('lession')
-        if user and lession_name:
-            lession = get_lession(user, lession_name, False)
-            diff_version = int(self.request.get('version'))
-            self.response.headers['Content-Type'] = 'text/xml'
-            if lession:
-                cards = Card.gql("WHERE lession = :lession AND version > :version", lession=lession, version=diff_version)
-                self.response.out.write('<cards version="0.1">\n')
-                for card in cards:
-                    if card.deleted:
-                        self.response.out.write('<card deleted="True"><front>%s</front><reverse>%s</reverse></card>\n' % \
-                                                (saxutils.escape(card.front_text),
-                                                 saxutils.escape(card.reverse_text)))
-                    else:
-                        self.response.out.write('<card>\n')
-                        self.response.out.write('<front batch="%s" timestamp="%s">%s</front>\n' % \
-                                                (card.front_batch, card.front_timestamp,
-                                                 saxutils.escape(card.front_text)))
-                        self.response.out.write('<reverse batch="%s" timestamp="%s">%s</reverse>\n' % \
-                                                (card.reverse_batch, card.reverse_timestamp,
-                                                 saxutils.escape(card.reverse_text)))
-                        self.response.out.write('</card>\n')
-                self.response.out.write('</cards>\n')
-            else:
-                self.response.out.write('<cards version="0.1"></cards>\n')
+class Upload(LessionRequestHandler):
+    def postWithUserAndLession(self, user, lession_name):
+        lession = get_lession(user, lession_name, True)
+        lession.version = lession.version + 1
+
+        p = PaukerParser(lession)
+        new_cards = p.parse(self.request.get('data'))
+
+        current_cards = lession.card_set
+
+        diff_cards = make_diff(lession.version, current_cards, new_cards)
+
+        self.response.out.write('<html><body><pre>')
+        for card in diff_cards:
+            self.response.out.write('%s    %s    %d   %s\n' % (card.front_text, card.reverse_text,
+                                                               card.version, card.deleted))
+        self.response.out.write('</pre></body></html>')
+
+        db.put(lession)
+        db.put(diff_cards)
+
+    def postNoLession(self):
+        self.response.out.write("""
+        <html>
+        <body>
+        <form action="/upload" enctype="multipart/form-data" method="post">
+        <div>Lession: <input type="text" name="lession"></div>
+        <div>Pauker file: <input type="file" name="data" size="40"></div>
+        <div><input type="submit" value="Upload"></div>
+        </form>
+        </body>
+        </html>""")
+
+class List(LessionRequestHandler):
+    def postWithUserAndLession(self, user, lession_name):
+        lession = get_lession(user, lession_name, False)
+        diff_version = int(self.request.get('version'))
+        self.response.headers['Content-Type'] = 'text/xml'
+        if lession:
+            cards = Card.gql("WHERE lession = :lession AND version > :version", lession=lession, version=diff_version)
+            self.response.out.write('<cards version="0.1">\n')
+            for card in cards:
+                if card.deleted:
+                    self.response.out.write('<card deleted="True"><front>%s</front><reverse>%s</reverse></card>\n' % \
+                                            (saxutils.escape(card.front_text),
+                                             saxutils.escape(card.reverse_text)))
+                else:
+                    self.response.out.write('<card>\n')
+                    self.response.out.write('<front batch="%s" timestamp="%s">%s</front>\n' % \
+                                            (card.front_batch, card.front_timestamp,
+                                             saxutils.escape(card.front_text)))
+                    self.response.out.write('<reverse batch="%s" timestamp="%s">%s</reverse>\n' % \
+                                            (card.reverse_batch, card.reverse_timestamp,
+                                             saxutils.escape(card.reverse_text)))
+                    self.response.out.write('</card>\n')
+            self.response.out.write('</cards>\n')
         else:
-            if user:
+            self.response.out.write('<cards version="0.1"></cards>\n')
+
+    def postNoLession(self):
+        self.response.out.write("""
+        <html>
+        <body>
+        <form action="/list" method="post">
+        <div>Lession: <input type="text" name="lession"></div>
+        <div>Version: <input type="text" name="version"></div>
+        <div><input type="submit" value="Show"></div>
+        </form>
+        </body>
+        </html>""")
+
+class Dump(LessionRequestHandler):
+    def postWithUserAndLession(self, user, lession_name):
+        lession = get_lession(user, lession_name, False)
+        self.response.headers['Content-Type'] = 'text/xml'
+
+        if not lession:
+            self.response.out.write("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <!--This is a lesson file for Pauker (http://pauker.sourceforge.net)-->
+            <Lesson LessonFormat="1.7">
+            <Description>%s by %s</Description>
+            </Lesson>""")
+            return
+
+        self.response.out.write("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <!--This is a lesson file for Pauker (http://pauker.sourceforge.net)-->
+        <Lesson LessonFormat="1.7">
+        <Description>%s by %s</Description>""" % (saxutils.escape(lession_name), saxutils.escape(user.nickname())))
+        cards = Card.gql("WHERE lession = :lession AND deleted = FALSE", lession=lession)
+
+        max_batch = -2
+        batches = {}
+        for card in cards:
+            max_batch = max(max_batch, card.front_batch)
+
+            if not batches.has_key(card.front_batch):
+                batches[card.front_batch] = []
+            batches[card.front_batch].append(card)
+
+        for batch in range(-2, max_batch + 1):
+            if not batches.has_key(batch):
+                self.response.out.write("<Batch/>\n")
+                continue
+            cards = batches[batch]
+            self.response.out.write("<Batch>\n")
+            for card in cards:
                 self.response.out.write("""
-                <html>
-                <body>
-                <form action="/list" method="get">
-                <div>Lession: <input type="text" name="lession"></div>
-                <div>Version: <input type="text" name="version"></div>
-                <div><input type="submit" value="Show"></div>
-                </form>
-                </body>
-                </html>""")
-            else:
-                self.redirect(users.create_login_url(self.request.uri))
+                <Card>
+                <FrontSide %s Orientation="LTR" RepeatByTyping="false">
+                <Text>%s</Text>
+                </FrontSide>
+                <ReverseSide %s Orientation="LTR" RepeatByTyping="false">
+                <Text>%s</Text>
+                </ReverseSide>
+                </Card>""" % (("LearnedTimestamp=\"%d\"" % card.front_timestamp) if card.front_batch > 0 else "",
+                              saxutils.escape(card.front_text),
+                              ("Batch=\"%d\" LearnedTimestamp=\"%d\"" % (card.reverse_batch, card.reverse_timestamp)) if card.reverse_batch > 0 else "",
+                              saxutils.escape(card.reverse_text)))
+            self.response.out.write("</Batch>\n")
+
+        self.response.out.write("</Lesson>")
+
+    def postNoLession(self):
+        self.response.out.write("""
+        <html>
+        <body>
+        <form action="/dump" method="post">
+        <div>Lession: <input type="text" name="lession"></div>
+        <div><input type="submit" value="Show"></div>
+        </form>
+        </body>
+        </html>""")
 
 class Lessions(webapp.RequestHandler):
     def get(self):
@@ -272,6 +350,7 @@ class Lessions(webapp.RequestHandler):
 application = webapp.WSGIApplication([('/', MainPage),
                                       ('/upload', Upload),
                                       ('/list', List),
+                                      ('/dump', Dump),
                                       ('/lessions', Lessions)],
                                      debug=True)
 
