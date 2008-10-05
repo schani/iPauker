@@ -8,13 +8,13 @@ from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-class Lession(db.Model):
+class Lesson(db.Model):
     name = db.StringProperty(required=True, multiline=True)
     owner = db.UserProperty(required=True)
     version = db.IntegerProperty(required=True)
 
 class Card(db.Model):
-    lession = db.ReferenceProperty(Lession, required=True)
+    lesson = db.ReferenceProperty(Lesson, required=True)
     version = db.IntegerProperty(required=True)
     deleted = db.BooleanProperty(required=True)
     front_text = db.TextProperty()
@@ -55,7 +55,7 @@ class MainPage(webapp.RequestHandler):
             <p><a href="/upload">Upload</a></p>
             <p><a href="/list">List</a></p>
             <p><a href="/dump">Dump</a></p>
-            <p><a href="/lessions">Lessions</a></p>
+            <p><a href="/lessons">Lessons</a></p>
             </body>
             </html>""")
         else:
@@ -68,7 +68,7 @@ IN_SIDE = 3
 IN_TEXT = 4
 
 class PaukerParser:
-    def __init__(self, lession):
+    def __init__(self, lesson):
         self.state = TOP_LEVEL
         self.batch = -2
         self.cards = []
@@ -78,7 +78,7 @@ class PaukerParser:
         self.reverse_batch = None
         self.reverse_timestamp = None
         self.text = None
-        self.lession = lession
+        self.lesson = lesson
 
     def start_element(self, name, attrs):
         if self.state == TOP_LEVEL and name == 'Batch':
@@ -115,8 +115,8 @@ class PaukerParser:
             self.batch = self.batch + 1
             self.state = TOP_LEVEL
         elif self.state == IN_CARD and name == 'Card':
-            self.cards.append(Card(lession = self.lession,
-                                   version = self.lession.version,
+            self.cards.append(Card(lesson = self.lesson,
+                                   version = self.lesson.version,
                                    deleted = False,
                                    front_text = db.Text(self.front_text),
                                    front_batch = self.front_batch,
@@ -149,16 +149,16 @@ class PaukerParser:
 
         return self.cards
 
-def get_lession(user, lession_name, create):
-    lessions = Lession.gql("WHERE name = :name AND owner = :owner", name=lession_name, owner=user).fetch(1)
-    if len(lessions) == 0:
+def get_lesson(user, lesson_name, create):
+    lessons = Lesson.gql("WHERE name = :name AND owner = :owner", name=lesson_name, owner=user).fetch(1)
+    if len(lessons) == 0:
         if not create:
             return None
-        lession = Lession(name=lession_name, owner=user, version=0)
-        lession.put()
-        return lession
+        lesson = Lesson(name=lesson_name, owner=user, version=0)
+        lesson.put()
+        return lesson
     else:
-        return lessions[0]
+        return lessons[0]
 
 def make_diff(version, old_cards, new_cards):
     old_cards_hash = {}
@@ -192,31 +192,31 @@ def make_diff(version, old_cards, new_cards):
             diff_cards.append(card)
     return diff_cards
 
-class LessionRequestHandler(webapp.RequestHandler):
+class LessonRequestHandler(webapp.RequestHandler):
     def get(self):
-        self.postNoLession()
+        self.postNoLesson()
 
     def post(self):
         user = users.get_current_user()
-        lession_name = self.request.get('lession')
-        if user and lession_name:
-            self.postWithUserAndLession(user, lession_name)
+        lesson_name = self.request.get('lesson')
+        if user and lesson_name:
+            self.postWithUserAndLesson(user, lesson_name)
         elif user:
-            self.postNoLession()
+            self.postNoLesson()
         else:
             self.redirect(users.create_login_url(self.request.uri))
 
-class Upload(LessionRequestHandler):
-    def postWithUserAndLession(self, user, lession_name):
-        lession = get_lession(user, lession_name, True)
-        lession.version = lession.version + 1
+class Upload(LessonRequestHandler):
+    def postWithUserAndLesson(self, user, lesson_name):
+        lesson = get_lesson(user, lesson_name, True)
+        lesson.version = lesson.version + 1
 
-        p = PaukerParser(lession)
+        p = PaukerParser(lesson)
         new_cards = p.parse(self.request.get('data'))
 
-        current_cards = lession.card_set
+        current_cards = lesson.card_set
 
-        diff_cards = make_diff(lession.version, current_cards, new_cards)
+        diff_cards = make_diff(lesson.version, current_cards, new_cards)
 
         self.response.out.write('<html><body><pre>')
         for card in diff_cards:
@@ -224,28 +224,28 @@ class Upload(LessionRequestHandler):
                                                                card.version, card.deleted))
         self.response.out.write('</pre></body></html>')
 
-        db.put(lession)
+        db.put(lesson)
         db.put(diff_cards)
 
-    def postNoLession(self):
+    def postNoLesson(self):
         self.response.out.write("""
         <html>
         <body>
         <form action="/upload" enctype="multipart/form-data" method="post">
-        <div>Lession: <input type="text" name="lession"></div>
+        <div>Lesson: <input type="text" name="lesson"></div>
         <div>Pauker file: <input type="file" name="data" size="40"></div>
         <div><input type="submit" value="Upload"></div>
         </form>
         </body>
         </html>""")
 
-class List(LessionRequestHandler):
-    def postWithUserAndLession(self, user, lession_name):
-        lession = get_lession(user, lession_name, False)
+class List(LessonRequestHandler):
+    def postWithUserAndLesson(self, user, lesson_name):
+        lesson = get_lesson(user, lesson_name, False)
         diff_version = int(self.request.get('version'))
         self.response.headers['Content-Type'] = 'text/xml'
-        if lession:
-            cards = Card.gql("WHERE lession = :lession AND version > :version", lession=lession, version=diff_version)
+        if lesson:
+            cards = Card.gql("WHERE lesson = :lesson AND version > :version", lesson=lesson, version=diff_version)
             self.response.out.write('<cards version="0.1">\n')
             for card in cards:
                 if card.deleted:
@@ -265,36 +265,36 @@ class List(LessionRequestHandler):
         else:
             self.response.out.write('<cards version="0.1"></cards>\n')
 
-    def postNoLession(self):
+    def postNoLesson(self):
         self.response.out.write("""
         <html>
         <body>
         <form action="/list" method="post">
-        <div>Lession: <input type="text" name="lession"></div>
+        <div>Lesson: <input type="text" name="lesson"></div>
         <div>Version: <input type="text" name="version"></div>
         <div><input type="submit" value="Show"></div>
         </form>
         </body>
         </html>""")
 
-class Dump(LessionRequestHandler):
-    def postWithUserAndLession(self, user, lession_name):
-        lession = get_lession(user, lession_name, False)
+class Dump(LessonRequestHandler):
+    def postWithUserAndLesson(self, user, lesson_name):
+        lesson = get_lesson(user, lesson_name, False)
         self.response.headers['Content-Type'] = 'text/xml'
 
-        if not lession:
+        if not lesson:
             self.response.out.write("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <!--This is a lesson file for Pauker (http://pauker.sourceforge.net)-->
             <Lesson LessonFormat="1.7">
             <Description>%s by %s</Description>
-            </Lesson>""")
+            </Lesson>""" % (saxutils.escape(lesson_name), saxutils.escape(user.nickname())))
             return
 
         self.response.out.write("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <!--This is a lesson file for Pauker (http://pauker.sourceforge.net)-->
         <Lesson LessonFormat="1.7">
-        <Description>%s by %s</Description>""" % (saxutils.escape(lession_name), saxutils.escape(user.nickname())))
-        cards = Card.gql("WHERE lession = :lession AND deleted = FALSE", lession=lession)
+        <Description>%s by %s</Description>""" % (saxutils.escape(lesson_name), saxutils.escape(user.nickname())))
+        cards = Card.gql("WHERE lesson = :lesson AND deleted = FALSE", lesson=lesson)
 
         max_batch = -2
         batches = {}
@@ -328,30 +328,30 @@ class Dump(LessionRequestHandler):
 
         self.response.out.write("</Lesson>")
 
-    def postNoLession(self):
+    def postNoLesson(self):
         self.response.out.write("""
         <html>
         <body>
         <form action="/dump" method="post">
-        <div>Lession: <input type="text" name="lession"></div>
+        <div>Lesson: <input type="text" name="lesson"></div>
         <div><input type="submit" value="Show"></div>
         </form>
         </body>
         </html>""")
 
-class Lessions(webapp.RequestHandler):
+class Lessons(webapp.RequestHandler):
     def get(self):
-        lessions = Lession.all()
+        lessons = Lesson.all()
         self.response.out.write('<html><body><pre>')
-        for lession in lessions:
-            self.response.out.write('%s   %s   %d\n' % (lession.name, lession.owner, lession.version))
+        for lesson in lessons:
+            self.response.out.write('%s   %s   %d\n' % (lesson.name, lesson.owner, lesson.version))
         self.response.out.write('</pre></body></html>')
 
 application = webapp.WSGIApplication([('/', MainPage),
                                       ('/upload', Upload),
                                       ('/list', List),
                                       ('/dump', Dump),
-                                      ('/lessions', Lessions)],
+                                      ('/lessons', Lessons)],
                                      debug=True)
 
 def main():
