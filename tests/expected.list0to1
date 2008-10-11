@@ -1,0 +1,30 @@
+<cards version="0.1">
+<card>
+<front batch="-2" timestamp="None">Anfertigung</front>
+<reverse batch="-2" timestamp="None">la confección</reverse>
+</card>
+<card>
+<front batch="-2" timestamp="None">betreuen, bedienen</front>
+<reverse batch="-2" timestamp="None">atender (a)</reverse>
+</card>
+<card>
+<front batch="-2" timestamp="None">Alles Gute! (Sie-Form)</front>
+<reverse batch="-2" timestamp="None">¡Que usted lo pase bien!</reverse>
+</card>
+<card>
+<front batch="2" timestamp="100">Baumwolle</front>
+<reverse batch="-2" timestamp="None">el algodón</reverse>
+</card>
+<card>
+<front batch="2" timestamp="101">Kosten</front>
+<reverse batch="-2" timestamp="None">el costo</reverse>
+</card>
+<card>
+<front batch="3" timestamp="103">die Pannenhilfe</front>
+<reverse batch="4" timestamp="104">la Ayuda (en) carretera</reverse>
+</card>
+<card>
+<front batch="3" timestamp="105">Psychologe</front>
+<reverse batch="4" timestamp="106">psicólogo</reverse>
+</card>
+</cards>
