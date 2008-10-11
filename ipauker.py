@@ -38,12 +38,14 @@ class Card(db.Model):
     def take_values_from(self, other):
         self.version = other.version
         self.deleted = other.deleted
-        self.front_text = other.front_text
-        self.front_batch = other.front_batch
-        self.front_timestamp = other.front_timestamp
-        self.reverse_text = other.reverse_text
-        self.reverse_batch = other.reverse_batch
-        self.reverse_timestamp = other.reverse_timestamp
+        if other.front_timestamp == None or other.front_timestamp > self.front_timestamp:
+            self.front_batch = other.front_batch
+            if other.front_timestamp != None:
+                self.front_timestamp = other.front_timestamp
+        if other.reverse_timestamp == None or other.reverse_timestamp > self.reverse_timestamp:
+            self.reverse_batch = other.reverse_batch
+            if other.reverse_timestamp != None:
+                self.reverse_timestamp = other.reverse_timestamp
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -194,17 +196,21 @@ def make_diff(version, old_cards, new_cards):
 
 class LessonRequestHandler(webapp.RequestHandler):
     def get(self):
-        self.postNoLesson()
+        user = users.get_current_user()
+        if not user:
+            self.redirect(users.create_login_url(self.request.uri))
+        else:
+            self.postNoLesson()
 
     def post(self):
         user = users.get_current_user()
         lesson_name = self.request.get('lesson')
         if user and lesson_name:
             self.postWithUserAndLesson(user, lesson_name)
-        elif user:
-            self.postNoLesson()
-        else:
+        elif not user:
             self.redirect(users.create_login_url(self.request.uri))
+        else:
+            self.postNoLesson()
 
 class Upload(LessonRequestHandler):
     def postWithUserAndLesson(self, user, lesson_name):
@@ -293,7 +299,7 @@ class Dump(LessonRequestHandler):
         self.response.out.write("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <!--This is a lesson file for Pauker (http://pauker.sourceforge.net)-->
         <Lesson LessonFormat="1.7">
-        <Description>%s by %s</Description>""" % (saxutils.escape(lesson_name), saxutils.escape(user.nickname())))
+        <Description>%s version %d by %s</Description>""" % (saxutils.escape(lesson_name), lesson.version, saxutils.escape(user.nickname())))
         cards = Card.gql("WHERE lesson = :lesson AND deleted = FALSE", lesson=lesson)
 
         max_batch = -2
