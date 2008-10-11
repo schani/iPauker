@@ -212,13 +212,12 @@ class LessonRequestHandler(webapp.RequestHandler):
         else:
             self.postNoLesson()
 
-class Upload(LessonRequestHandler):
+class DiffRequestHandler(LessonRequestHandler):
     def postWithUserAndLesson(self, user, lesson_name):
         lesson = get_lesson(user, lesson_name, True)
         lesson.version = lesson.version + 1
 
-        p = PaukerParser(lesson)
-        new_cards = p.parse(self.request.get('data'))
+        new_cards = self.parseDiffData(lesson, self.request.get('data'))
 
         current_cards = lesson.card_set
 
@@ -237,13 +236,18 @@ class Upload(LessonRequestHandler):
         self.response.out.write("""
         <html>
         <body>
-        <form action="/upload" enctype="multipart/form-data" method="post">
+        <form action="%s" enctype="multipart/form-data" method="post">
         <div>Lesson: <input type="text" name="lesson"></div>
         <div>Pauker file: <input type="file" name="data" size="40"></div>
-        <div><input type="submit" value="Upload"></div>
+        <div><input type="submit" value="Diff"></div>
         </form>
         </body>
-        </html>""")
+        </html>""" % self.request.uri)
+
+class Upload(DiffRequestHandler):
+    def parseDiffData(self, lesson, data):
+        p = PaukerParser(lesson)
+        return p.parse(data)
 
 class List(LessonRequestHandler):
     def postWithUserAndLesson(self, user, lesson_name):
