@@ -69,11 +69,11 @@ IN_CARD = 2
 IN_SIDE = 3
 IN_TEXT = 4
 
-class PaukerParser:
+class ParserBase:
     def __init__(self, lesson):
         self.state = TOP_LEVEL
-        self.batch = -2
         self.cards = []
+        self.front_batch = None
         self.front_text = None
         self.front_timestamp = None
         self.reverse_text = None
@@ -82,15 +82,38 @@ class PaukerParser:
         self.text = None
         self.lesson = lesson
 
+    def append_card(self):
+        self.cards.append(Card(lesson = self.lesson,
+                               version = self.lesson.version,
+                               deleted = False,
+                               front_text = db.Text(self.front_text),
+                               front_batch = self.front_batch,
+                               front_timestamp = self.front_timestamp,
+                               reverse_text = db.Text(self.reverse_text),
+                               reverse_batch = self.reverse_batch,
+                               reverse_timestamp = self.reverse_timestamp))
+
+    def parse(self, data):
+        p = xml.parsers.expat.ParserCreate()
+        p.StartElementHandler = self.start_element
+        p.EndElementHandler = self.end_element
+        p.CharacterDataHandler = self.char_data
+
+        p.Parse(data, 1);
+
+        return self.cards
+
+class PaukerParser(ParserBase):
+    def __init__(self, lesson):
+        ParserBase.__init__(self, lesson)
+        self.front_batch = -2
+
     def start_element(self, name, attrs):
         if self.state == TOP_LEVEL and name == 'Batch':
             self.state = IN_BATCH
         elif self.state == IN_BATCH and name == 'Card':
-            self.front = None
-            self.back = None
             self.state = IN_CARD
         elif self.state == IN_CARD and name == 'FrontSide':
-            self.front_batch = self.batch
             if attrs.has_key('LearnedTimestamp'):
                 self.front_timestamp = int(attrs['LearnedTimestamp']);
             else:
@@ -110,22 +133,13 @@ class PaukerParser:
             self.state = IN_SIDE
         elif self.state == IN_SIDE and name == 'Text':
             self.state = IN_TEXT
-        pass
 
     def end_element(self, name):
         if self.state == IN_BATCH and name == 'Batch':
-            self.batch = self.batch + 1
+            self.front_batch = self.front_batch + 1
             self.state = TOP_LEVEL
         elif self.state == IN_CARD and name == 'Card':
-            self.cards.append(Card(lesson = self.lesson,
-                                   version = self.lesson.version,
-                                   deleted = False,
-                                   front_text = db.Text(self.front_text),
-                                   front_batch = self.front_batch,
-                                   front_timestamp = self.front_timestamp,
-                                   reverse_text = db.Text(self.reverse_text),
-                                   reverse_batch = self.reverse_batch,
-                                   reverse_timestamp = self.reverse_timestamp))
+            self.append_card()
             self.state = IN_BATCH
         elif self.state == IN_SIDE and name == 'FrontSide':
             self.front_text = self.text
@@ -135,21 +149,10 @@ class PaukerParser:
             self.state = IN_CARD
         elif self.state == IN_TEXT and name == 'Text':
             self.state = IN_SIDE
-        pass
 
     def char_data(self, data):
         if self.state == IN_TEXT:
             self.text = self.text + data
-
-    def parse(self, data):
-        p = xml.parsers.expat.ParserCreate()
-        p.StartElementHandler = self.start_element
-        p.EndElementHandler = self.end_element
-        p.CharacterDataHandler = self.char_data
-
-        p.Parse(data, 1);
-
-        return self.cards
 
 def get_lesson(user, lesson_name, create):
     lessons = Lesson.gql("WHERE name = :name AND owner = :owner", name=lesson_name, owner=user).fetch(1)
