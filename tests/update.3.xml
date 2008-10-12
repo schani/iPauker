@@ -1,0 +1,14 @@
+<cards format="0.1">
+<card>
+<front batch="-2" timestamp="None">betreuen, bedienen</front>
+<reverse batch="1" timestamp="300">atender (a)</reverse>
+</card>
+<card>
+<front batch="-2" timestamp="100">die Pannenhilfe</front>
+<reverse batch="4" timestamp="104">la Ayuda (en) carretera</reverse>
+</card>
+<card>
+<front batch="-2" timestamp="301">Alles Gute! (Sie-Form)</front>
+<reverse batch="-2" timestamp="None">¡Que usted lo pase bien!</reverse>
+</card>
+</cards>

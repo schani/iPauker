@@ -47,6 +47,13 @@ do_upload_tests () {
     do_version_tests $version
 }
 
+do_update_tests () {
+    version=$1
+    echo "updating $version"
+    $CURL -o /dev/null -b cookies.txt -F "lesson=bla" -F "data=@update.${version}.xml" -L $URLBASE/update
+    do_version_tests $version
+}
+
 rm cookies.txt
 
 echo "login"

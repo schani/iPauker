@@ -154,6 +154,42 @@ class PaukerParser(ParserBase):
         if self.state == IN_TEXT:
             self.text = self.text + data
 
+class CardsParser(ParserBase):
+    def start_element(self, name, attrs):
+        if self.state == TOP_LEVEL and name == 'card':
+            self.state = IN_CARD
+        elif self.state == IN_CARD and name == 'front':
+            self.front_batch = int(attrs['batch'])
+            if attrs['timestamp'] == 'None':
+                self.front_timestamp = None
+            else:
+                self.front_timestamp = int(attrs['timestamp'])
+            self.text = ''
+            self.state = IN_SIDE
+        elif self.state == IN_CARD and name == 'reverse':
+            self.reverse_batch = int(attrs['batch'])
+            if attrs['timestamp'] == 'None':
+                self.reverse_timestamp = None
+            else:
+                self.reverse_timestamp = int(attrs['timestamp'])
+            self.text = ''
+            self.state = IN_SIDE
+
+    def end_element(self, name):
+        if self.state == IN_CARD and name == 'card':
+            self.append_card()
+            self.state = TOP_LEVEL
+        elif self.state == IN_SIDE and name == 'front':
+            self.front_text = self.text
+            self.state = IN_CARD
+        elif self.state == IN_SIDE and name == 'reverse':
+            self.reverse_text = self.text
+            self.state = IN_CARD
+
+    def char_data(self, data):
+        if self.state == IN_SIDE:
+            self.text = self.text + data
+
 def get_lesson(user, lesson_name, create):
     lessons = Lesson.gql("WHERE name = :name AND owner = :owner", name=lesson_name, owner=user).fetch(1)
     if len(lessons) == 0:
@@ -165,7 +201,7 @@ def get_lesson(user, lesson_name, create):
     else:
         return lessons[0]
 
-def make_diff(version, old_cards, new_cards):
+def make_diff(version, old_cards, new_cards, is_full_list):
     old_cards_hash = {}
     new_cards_hash = {}
     diff_cards = []
@@ -190,11 +226,12 @@ def make_diff(version, old_cards, new_cards):
             touched_cards[old_card.hash_key()] = True
         else:
             diff_cards.append(card)
-    for card in old_cards:
-        if (not card.deleted) and (not touched_cards.has_key(card.hash_key())):
-            card.deleted = True
-            card.version = version
-            diff_cards.append(card)
+    if is_full_list:
+        for card in old_cards:
+            if (not card.deleted) and (not touched_cards.has_key(card.hash_key())):
+                card.deleted = True
+                card.version = version
+                diff_cards.append(card)
     return diff_cards
 
 class LessonRequestHandler(webapp.RequestHandler):
@@ -224,7 +261,7 @@ class DiffRequestHandler(LessonRequestHandler):
 
         current_cards = lesson.card_set
 
-        diff_cards = make_diff(lesson.version, current_cards, new_cards)
+        diff_cards = make_diff(lesson.version, current_cards, new_cards, self.is_full_list())
 
         self.response.out.write('<html><body><pre>')
         for card in diff_cards:
@@ -251,6 +288,17 @@ class Upload(DiffRequestHandler):
     def parseDiffData(self, lesson, data):
         p = PaukerParser(lesson)
         return p.parse(data)
+
+    def is_full_list(self):
+        return True
+
+class Update(DiffRequestHandler):
+    def parseDiffData(self, lesson, data):
+        p = CardsParser(lesson)
+        return p.parse(data)
+
+    def is_full_list(self):
+        return False
 
 class List(LessonRequestHandler):
     def postWithUserAndLesson(self, user, lesson_name):
@@ -363,6 +411,7 @@ class Lessons(webapp.RequestHandler):
 
 application = webapp.WSGIApplication([('/', MainPage),
                                       ('/upload', Upload),
+                                      ('/update', Update),
                                       ('/list', List),
                                       ('/dump', Dump),
                                       ('/lessons', Lessons)],

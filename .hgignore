@@ -1,3 +1,5 @@
 syntax: glob
 *~
+tests/out.*
+tests/cookies.txt
 index.yaml
