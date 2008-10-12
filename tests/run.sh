@@ -31,8 +31,15 @@ do_list_tests () {
     done
 }
 
+do_lessons_test () {
+    version=$1
+    shift
+    do_test lessons${version} -L $URLBASE/lessons
+}
+
 do_version_tests () {
     version=$1
+    do_lessons_test $version
     do_dump_test $version
     do_list_tests $version
     if [ $ERRORS = yes ] ; then

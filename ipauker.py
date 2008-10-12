@@ -249,6 +249,9 @@ class UserRequestHandler(webapp.RequestHandler):
         else:
             self.redirect(users.create_login_url(self.request.uri))
 
+    def get_with_user(self, user):
+        self.post_with_user(user)
+
 class LessonRequestHandler(UserRequestHandler):
     def get_with_user(self, user):
         self.post_no_lesson()
@@ -409,13 +412,15 @@ class Dump(LessonRequestHandler):
         </body>
         </html>""")
 
-class Lessons(webapp.RequestHandler):
-    def get(self):
-        lessons = Lesson.all()
-        self.response.out.write('<html><body><pre>')
+class Lessons(UserRequestHandler):
+    def post_with_user(self, user):
+        lessons = Lesson.gql("WHERE owner = :owner", owner=user)
+        self.response.headers['Content-Type'] = 'text/xml'
+        self.response.out.write('<lessons format="0.1">\n')
         for lesson in lessons:
-            self.response.out.write('%s   %s   %d\n' % (lesson.name, lesson.owner, lesson.version))
-        self.response.out.write('</pre></body></html>')
+            self.response.out.write('<lesson version="%s">%s</lesson>\n' %
+                                    (lesson.version, saxutils.escape(lesson.name)))
+        self.response.out.write('</lessons>\n')
 
 application = webapp.WSGIApplication([('/', MainPage),
                                       ('/upload', Upload),
