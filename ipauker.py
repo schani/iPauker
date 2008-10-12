@@ -240,24 +240,24 @@ class LessonRequestHandler(webapp.RequestHandler):
         if not user:
             self.redirect(users.create_login_url(self.request.uri))
         else:
-            self.postNoLesson()
+            self.post_no_lesson()
 
     def post(self):
         user = users.get_current_user()
         lesson_name = self.request.get('lesson')
         if user and lesson_name:
-            self.postWithUserAndLesson(user, lesson_name)
+            self.post_with_user_and_lesson(user, lesson_name)
         elif not user:
             self.redirect(users.create_login_url(self.request.uri))
         else:
-            self.postNoLesson()
+            self.post_no_lesson()
 
 class DiffRequestHandler(LessonRequestHandler):
-    def postWithUserAndLesson(self, user, lesson_name):
+    def post_with_user_and_lesson(self, user, lesson_name):
         lesson = get_lesson(user, lesson_name, True)
         lesson.version = lesson.version + 1
 
-        new_cards = self.parseDiffData(lesson, self.request.get('data'))
+        new_cards = self.parse_diff_data(lesson, self.request.get('data'))
 
         current_cards = lesson.card_set
 
@@ -272,7 +272,7 @@ class DiffRequestHandler(LessonRequestHandler):
         db.put(lesson)
         db.put(diff_cards)
 
-    def postNoLesson(self):
+    def post_no_lesson(self):
         self.response.out.write("""
         <html>
         <body>
@@ -285,7 +285,7 @@ class DiffRequestHandler(LessonRequestHandler):
         </html>""" % self.request.uri)
 
 class Upload(DiffRequestHandler):
-    def parseDiffData(self, lesson, data):
+    def parse_diff_data(self, lesson, data):
         p = PaukerParser(lesson)
         return p.parse(data)
 
@@ -293,7 +293,7 @@ class Upload(DiffRequestHandler):
         return True
 
 class Update(DiffRequestHandler):
-    def parseDiffData(self, lesson, data):
+    def parse_diff_data(self, lesson, data):
         p = CardsParser(lesson)
         return p.parse(data)
 
@@ -301,7 +301,7 @@ class Update(DiffRequestHandler):
         return False
 
 class List(LessonRequestHandler):
-    def postWithUserAndLesson(self, user, lesson_name):
+    def post_with_user_and_lesson(self, user, lesson_name):
         lesson = get_lesson(user, lesson_name, False)
         diff_version = int(self.request.get('version'))
         self.response.headers['Content-Type'] = 'text/xml'
@@ -327,7 +327,7 @@ class List(LessonRequestHandler):
         else:
             self.response.out.write('<cards format="0.1"></cards>\n')
 
-    def postNoLesson(self):
+    def post_no_lesson(self):
         self.response.out.write("""
         <html>
         <body>
@@ -340,7 +340,7 @@ class List(LessonRequestHandler):
         </html>""")
 
 class Dump(LessonRequestHandler):
-    def postWithUserAndLesson(self, user, lesson_name):
+    def post_with_user_and_lesson(self, user, lesson_name):
         lesson = get_lesson(user, lesson_name, False)
         self.response.headers['Content-Type'] = 'text/xml'
 
@@ -390,7 +390,7 @@ class Dump(LessonRequestHandler):
 
         self.response.out.write("</Lesson>")
 
-    def postNoLesson(self):
+    def post_no_lesson(self):
         self.response.out.write("""
         <html>
         <body>
