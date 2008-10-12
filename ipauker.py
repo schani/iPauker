@@ -258,8 +258,9 @@ class List(LessonRequestHandler):
         diff_version = int(self.request.get('version'))
         self.response.headers['Content-Type'] = 'text/xml'
         if lesson:
-            cards = Card.gql("WHERE lesson = :lesson AND version > :version", lesson=lesson, version=diff_version)
-            self.response.out.write('<cards version="0.1">\n')
+            cards = Card.gql("WHERE lesson = :lesson AND version > :version",
+                             lesson=lesson, version=diff_version)
+            self.response.out.write('<cards format="0.1" version="%s">\n' % lesson.version)
             for card in cards:
                 if card.deleted:
                     self.response.out.write('<card deleted="True"><front>%s</front><reverse>%s</reverse></card>\n' % \
@@ -276,7 +277,7 @@ class List(LessonRequestHandler):
                     self.response.out.write('</card>\n')
             self.response.out.write('</cards>\n')
         else:
-            self.response.out.write('<cards version="0.1"></cards>\n')
+            self.response.out.write('<cards format="0.1"></cards>\n')
 
     def postNoLesson(self):
         self.response.out.write("""

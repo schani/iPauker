@@ -1,4 +1,4 @@
-<cards version="0.1">
+<cards format="0.1" version="2">
 <card deleted="True"><front>Anfertigung</front><reverse>la confección</reverse></card>
 <card>
 <front batch="-2" timestamp="None">betreuen, bedienen</front>
