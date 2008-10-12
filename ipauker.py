@@ -234,21 +234,29 @@ def make_diff(version, old_cards, new_cards, is_full_list):
                 diff_cards.append(card)
     return diff_cards
 
-class LessonRequestHandler(webapp.RequestHandler):
+class UserRequestHandler(webapp.RequestHandler):
     def get(self):
         user = users.get_current_user()
-        if not user:
-            self.redirect(users.create_login_url(self.request.uri))
+        if user:
+            self.get_with_user(user)
         else:
-            self.post_no_lesson()
+            self.redirect(users.create_login_url(self.request.uri))
 
     def post(self):
         user = users.get_current_user()
-        lesson_name = self.request.get('lesson')
-        if user and lesson_name:
-            self.post_with_user_and_lesson(user, lesson_name)
-        elif not user:
+        if user:
+            self.post_with_user(user)
+        else:
             self.redirect(users.create_login_url(self.request.uri))
+
+class LessonRequestHandler(UserRequestHandler):
+    def get_with_user(self, user):
+        self.post_no_lesson()
+
+    def post_with_user(self, user):
+        lesson_name = self.request.get('lesson')
+        if lesson_name:
+            self.post_with_user_and_lesson(user, lesson_name)
         else:
             self.post_no_lesson()
 
