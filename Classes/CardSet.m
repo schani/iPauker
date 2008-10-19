@@ -19,13 +19,6 @@
     isFlipped = FALSE;
     cards = [[NSMutableArray arrayWithCapacity: 32] retain];
 
-    /*
-    [cards addObject: [[[Card alloc] initInCardSet: self withFrontSideText: @"Garten" backSideText: @"el jardin"] autorelease]];
-    [cards addObject: [[[Card alloc] initInCardSet: self withFrontSideText: @"Auto" backSideText: @"el coche"] autorelease]];
-    [cards addObject: [[[Card alloc] initInCardSet: self withFrontSideText: @"laufen" backSideText: @"correr"] autorelease]];
-    [cards addObject: [[[Card alloc] initInCardSet: self withFrontSideText: @"schlafen" backSideText: @"dormir"] autorelease]];
-     */
-
     countsCurrent = NO;
     
     return self;
@@ -133,6 +126,20 @@
     }
 
     return expired;
+}
+
+- (NSArray*) changedCards
+{
+    NSMutableArray *changed = [NSMutableArray arrayWithCapacity: [cards count] / 10];
+    NSEnumerator *enumerator;
+    Card *card;
+    
+    enumerator = [cards objectEnumerator];
+    while (card = [enumerator nextObject])
+	if ([card isChanged])
+	    [changed addObject: card];
+
+    return changed;
 }
 
 - (void) cardsMoved

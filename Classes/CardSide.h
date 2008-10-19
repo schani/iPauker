@@ -13,9 +13,12 @@
 
 @interface CardSide : NSObject {
     Card *card;
+
     NSString *text;
     int batch;
     long long timestamp;
+    
+    BOOL changed;
 }
 
 - (id) initForCard: (Card*) c withText: (NSString*) t batch: (int) b timestamp: (long long) ts;
@@ -29,5 +32,7 @@
 - (void) setNew;
 
 - (BOOL) isExpired;
+
+- (BOOL) isChanged;
 
 @end

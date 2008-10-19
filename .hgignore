@@ -1,3 +1,4 @@
 syntax: glob
 *~
 iPauker.xcodeproj/schani.*
+build/*

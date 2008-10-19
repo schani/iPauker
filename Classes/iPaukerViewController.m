@@ -26,6 +26,18 @@
 									   bundle: nil];
 }
 
+- (IBAction)settings:(id)sender
+{
+    NSLog(@"settings");
+}
+
+- (IBAction)update:(id)sender
+{
+    NSArray *changed = [cardSet changedCards];
+
+    NSLog(@"update: %d changed", [changed count]);
+}
+
 - (IBAction)learnNew:(id)sender {
     if (!cardSet)
 	return;

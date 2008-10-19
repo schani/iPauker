@@ -34,6 +34,7 @@
 
 - (NSArray*) newCards;
 - (NSArray*) expiredCards;
+- (NSArray*) changedCards;
 
 - (void) cardsMoved;
 

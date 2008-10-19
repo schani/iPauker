@@ -12,6 +12,9 @@
     iPaukerLearnViewController *learnViewController;
 }
 
+- (IBAction)settings:(id)sender;
+- (IBAction)update:(id)sender;
+
 - (IBAction)learnNew:(id)sender;
 - (IBAction)repeatExpired:(id)sender;
 

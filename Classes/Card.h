@@ -35,4 +35,6 @@
 - (NSString*) question;
 - (NSString*) answer;
 
+- (BOOL) isChanged;
+
 @end

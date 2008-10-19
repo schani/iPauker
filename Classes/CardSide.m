@@ -18,9 +18,12 @@
     self = [super init];
     
     card = c;
+    
     text = [t retain];
     batch = b;
     timestamp = ts;
+    
+    changed = NO;
     
     return self;
 }
@@ -45,6 +48,7 @@
 - (void) nextBatch
 {
     ++batch;
+    changed = YES;
     [[card cardSet] cardsMoved];
 }
 
@@ -56,6 +60,7 @@
 - (void) setNew
 {
     batch = -2;
+    changed = YES;
     [[card cardSet] cardsMoved];
 }
 
@@ -103,9 +108,12 @@ batch_expire_time (int batch)
     long long currentTime = [(iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate] currentTime];
     long long expireTimestamp = [self expireTimestamp];
 
-    if (expireTimestamp < currentTime)
-	NSLog (@"in batch %d: expire %lld current %lld", batch, expireTimestamp, currentTime);
     return expireTimestamp < currentTime;
+}
+
+- (BOOL) isChanged
+{
+    return changed;
 }
 
 @end

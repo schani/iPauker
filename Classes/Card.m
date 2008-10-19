@@ -63,6 +63,11 @@
 - (NSString*) answer
 {
     return [[self answerSide] text];
-}    
+}
+
+- (BOOL) isChanged
+{
+    return [frontSide isChanged] || [reverseSide isChanged];
+}
 
 @end
