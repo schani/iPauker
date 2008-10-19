@@ -1,9 +1,11 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import "CardSet.h"
+#import "ConnectionController.h"
 #import "iPaukerLearnViewController.h"
 
-@interface iPaukerViewController : UIViewController {
+@interface iPaukerViewController : UIViewController <DownloadClient>
+{
     IBOutlet UILabel *expiredLabel;
     IBOutlet UILabel *learnedLabel;
     IBOutlet UILabel *totalLabel;
@@ -17,6 +19,8 @@
 
 - (IBAction)learnNew:(id)sender;
 - (IBAction)repeatExpired:(id)sender;
+
+- (void) startDownload;
 
 - (void) updateStats;
 

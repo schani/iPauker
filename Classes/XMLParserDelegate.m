@@ -55,7 +55,8 @@ didStartElement:(NSString *)elementName
 	state = StateInCard;
     } else if (state == StateInCard && [elementName isEqualToString: @"front"]) {
 	frontBatch = [[attributeDict valueForKey: @"batch"] intValue];
-	if ([attributeDict valueForKey: @"timestamp"])
+	if ([attributeDict valueForKey: @"timestamp"]
+	    && ![[attributeDict valueForKey: @"timestamp"] isEqualToString: @"None"])
 	    frontTimestamp = [[attributeDict valueForKey: @"timestamp"] longLongValue];
 	else
 	    frontTimestamp = -1;
@@ -63,7 +64,8 @@ didStartElement:(NSString *)elementName
 	state = StateInSide;
     } else if (state == StateInCard && [elementName isEqualToString: @"reverse"]) {
 	reverseBatch = [[attributeDict valueForKey: @"batch"] intValue];
-	if ([attributeDict valueForKey: @"timestamp"])
+	if ([attributeDict valueForKey: @"timestamp"]
+	    && ![[attributeDict valueForKey: @"timestamp"] isEqualToString: @"None"])
 	    reverseTimestamp = [[attributeDict valueForKey: @"timestamp"] longLongValue];
 	else
 	    reverseTimestamp = -1;

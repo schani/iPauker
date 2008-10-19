@@ -23,6 +23,8 @@
 		8EA2C05D0E52449100928C39 /* CardSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA2C05C0E52449100928C39 /* CardSet.m */; };
 		8EA2C0A70E524B7C00928C39 /* iPaukerLearnViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA2C0A60E524B7C00928C39 /* iPaukerLearnViewController.m */; };
 		8EA2C0A90E524BA000928C39 /* iPaukerLearnViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EA2C0A80E524BA000928C39 /* iPaukerLearnViewController.xib */; };
+		8EC3A3110EAB9C7F00EB02B2 /* ConnectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3A3100EAB9C7F00EB02B2 /* ConnectionController.m */; };
+		8EC3A3190EAB9FD300EB02B2 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3A3180EAB9FD300EB02B2 /* NSStringAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +57,10 @@
 		8EA2C0A50E524B7C00928C39 /* iPaukerLearnViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPaukerLearnViewController.h; sourceTree = "<group>"; };
 		8EA2C0A60E524B7C00928C39 /* iPaukerLearnViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPaukerLearnViewController.m; sourceTree = "<group>"; };
 		8EA2C0A80E524BA000928C39 /* iPaukerLearnViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = iPaukerLearnViewController.xib; sourceTree = "<group>"; };
+		8EC3A30F0EAB9C7F00EB02B2 /* ConnectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionController.h; sourceTree = "<group>"; };
+		8EC3A3100EAB9C7F00EB02B2 /* ConnectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionController.m; sourceTree = "<group>"; };
+		8EC3A3170EAB9FD300EB02B2 /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringAdditions.h; sourceTree = "<group>"; };
+		8EC3A3180EAB9FD300EB02B2 /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditions.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +99,10 @@
 				8E2741650E53A72B008A1AD6 /* LearnProcessing.m */,
 				8E2742190E563435008A1AD6 /* XMLParserDelegate.h */,
 				8E27421A0E563435008A1AD6 /* XMLParserDelegate.m */,
+				8EC3A30F0EAB9C7F00EB02B2 /* ConnectionController.h */,
+				8EC3A3100EAB9C7F00EB02B2 /* ConnectionController.m */,
+				8EC3A3170EAB9FD300EB02B2 /* NSStringAdditions.h */,
+				8EC3A3180EAB9FD300EB02B2 /* NSStringAdditions.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -212,6 +222,8 @@
 				8E2740760E539693008A1AD6 /* RepeatProcessing.m in Sources */,
 				8E2741660E53A72B008A1AD6 /* LearnProcessing.m in Sources */,
 				8E27421B0E563435008A1AD6 /* XMLParserDelegate.m in Sources */,
+				8EC3A3110EAB9C7F00EB02B2 /* ConnectionController.m in Sources */,
+				8EC3A3190EAB9FD300EB02B2 /* NSStringAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

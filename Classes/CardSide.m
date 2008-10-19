@@ -45,11 +45,20 @@
     return batch;
 }
 
+- (void) markChange
+{
+    changed = YES;
+
+    [(iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate] updateTime];
+    timestamp = [(iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate] currentTime];
+
+    [[card cardSet] cardsMoved];
+}
+
 - (void) nextBatch
 {
     ++batch;
-    changed = YES;
-    [[card cardSet] cardsMoved];
+    [self markChange];
 }
 
 - (BOOL) isNew
@@ -60,17 +69,19 @@
 - (void) setNew
 {
     batch = -2;
-    changed = YES;
-    [[card cardSet] cardsMoved];
+    [self markChange];
+}
+
+- (long long) timestamp
+{
+    return timestamp;
 }
 
 static long long
 batch_expire_time (int batch)
 {
     long long time = (long long) (3600 * 24 * exp (batch) * 1000);
-    
-    NSLog (@"expire time for batch %d is %lld", batch, time);
-    
+
     return time;
 }
 

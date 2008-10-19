@@ -14,17 +14,12 @@
 @interface iPaukerAppDelegate : NSObject <UIApplicationDelegate> {
     IBOutlet UIWindow *window;
     IBOutlet iPaukerViewController *viewController;
-    //NSString *fileName;
-    NSMutableData *downloadData;
-    int state;
     
     long long currentTime;
 }
 
 @property (nonatomic, retain) UIWindow *window;
 @property (nonatomic, retain) iPaukerViewController *viewController;
-
-- (void) startDownload;
 
 - (void) updateTime;
 - (long long) currentTime;

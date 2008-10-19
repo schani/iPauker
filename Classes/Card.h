@@ -37,4 +37,6 @@
 
 - (BOOL) isChanged;
 
+- (void) writeXMLToString: (NSMutableString*) string;
+
 @end

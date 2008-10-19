@@ -31,6 +31,8 @@
 - (BOOL) isNew;
 - (void) setNew;
 
+- (long long) timestamp;
+
 - (BOOL) isExpired;
 
 - (BOOL) isChanged;

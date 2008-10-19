@@ -6,8 +6,9 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import "Card.h"
+#import "NSStringAdditions.h"
 
+#import "Card.h"
 
 @implementation Card
 
@@ -68,6 +69,21 @@
 - (BOOL) isChanged
 {
     return [frontSide isChanged] || [reverseSide isChanged];
+}
+
+- (void) writeXMLToString: (NSMutableString*) string
+{
+    [string appendFormat: @"<card><front batch=\"%d\"", [frontSide batch]];
+    if ([frontSide timestamp] <= 0)
+	[string appendString: @">"];
+    else
+	[string appendFormat: @" timestamp=\"%lld\">", [frontSide timestamp]];
+    [string appendFormat: @"%@</front><reverse batch=\"%d\"", [[frontSide text] XMLEncode], [reverseSide batch]];
+    if ([reverseSide timestamp] <= 0)
+	[string appendString: @">"];
+    else
+	[string appendFormat: @" timestamp=\"%lld\">", [reverseSide timestamp]];
+    [string appendFormat: @"%@</reverse></card>\n", [[reverseSide text] XMLEncode]];
 }
 
 @end
