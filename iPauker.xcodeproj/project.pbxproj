@@ -25,6 +25,9 @@
 		8EA2C0A90E524BA000928C39 /* iPaukerLearnViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EA2C0A80E524BA000928C39 /* iPaukerLearnViewController.xib */; };
 		8EC3A3110EAB9C7F00EB02B2 /* ConnectionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3A3100EAB9C7F00EB02B2 /* ConnectionController.m */; };
 		8EC3A3190EAB9FD300EB02B2 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3A3180EAB9FD300EB02B2 /* NSStringAdditions.m */; };
+		8EC3A3C60EABDAA300EB02B2 /* DatabaseController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3A3C50EABDAA300EB02B2 /* DatabaseController.m */; };
+		8EC3A3D00EABE5DB00EB02B2 /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3A3CF0EABE5DB00EB02B2 /* PreferencesController.m */; };
+		8EC3A4390EABF5BB00EB02B2 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EC3A4380EABF5BB00EB02B2 /* libsqlite3.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +64,11 @@
 		8EC3A3100EAB9C7F00EB02B2 /* ConnectionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionController.m; sourceTree = "<group>"; };
 		8EC3A3170EAB9FD300EB02B2 /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringAdditions.h; sourceTree = "<group>"; };
 		8EC3A3180EAB9FD300EB02B2 /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditions.m; sourceTree = "<group>"; };
+		8EC3A3C40EABDAA300EB02B2 /* DatabaseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseController.h; sourceTree = "<group>"; };
+		8EC3A3C50EABDAA300EB02B2 /* DatabaseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseController.m; sourceTree = "<group>"; };
+		8EC3A3CE0EABE5DB00EB02B2 /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesController.h; sourceTree = "<group>"; };
+		8EC3A3CF0EABE5DB00EB02B2 /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesController.m; sourceTree = "<group>"; };
+		8EC3A4380EABF5BB00EB02B2 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +78,7 @@
 			files = (
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
+				8EC3A4390EABF5BB00EB02B2 /* libsqlite3.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +112,10 @@
 				8EC3A3100EAB9C7F00EB02B2 /* ConnectionController.m */,
 				8EC3A3170EAB9FD300EB02B2 /* NSStringAdditions.h */,
 				8EC3A3180EAB9FD300EB02B2 /* NSStringAdditions.m */,
+				8EC3A3C40EABDAA300EB02B2 /* DatabaseController.h */,
+				8EC3A3C50EABDAA300EB02B2 /* DatabaseController.m */,
+				8EC3A3CE0EABE5DB00EB02B2 /* PreferencesController.h */,
+				8EC3A3CF0EABE5DB00EB02B2 /* PreferencesController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -150,6 +163,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8EC3A4380EABF5BB00EB02B2 /* libsqlite3.0.dylib */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 			);
@@ -224,6 +238,8 @@
 				8E27421B0E563435008A1AD6 /* XMLParserDelegate.m in Sources */,
 				8EC3A3110EAB9C7F00EB02B2 /* ConnectionController.m in Sources */,
 				8EC3A3190EAB9FD300EB02B2 /* NSStringAdditions.m in Sources */,
+				8EC3A3C60EABDAA300EB02B2 /* DatabaseController.m in Sources */,
+				8EC3A3D00EABE5DB00EB02B2 /* PreferencesController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
