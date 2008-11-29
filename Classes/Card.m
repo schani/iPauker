@@ -18,12 +18,14 @@
 	     reverseText: (NSString*) rt
 	    reverseBatch: (int) rb
 	reverseTimestamp: (long long) rts
+		     key: (int) k
 {
     self = [super init];
     
     cardSet = nil;
     frontSide = [[CardSide alloc] initForCard: self withText: ft batch: fb timestamp: fts];
     reverseSide = [[CardSide alloc] initForCard: self withText: rt batch: rb timestamp: rts];
+    key = k;
 
     return self;
 }
@@ -69,6 +71,17 @@
 - (BOOL) isChanged
 {
     return [frontSide isChanged] || [reverseSide isChanged];
+}
+
+- (void) setNotChanged
+{
+    [frontSide setChanged: NO];
+    [reverseSide setChanged: NO];
+}
+
+- (int) key
+{
+    return key;
 }
 
 - (void) writeXMLToString: (NSMutableString*) string

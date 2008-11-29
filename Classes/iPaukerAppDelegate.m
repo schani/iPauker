@@ -44,7 +44,7 @@
 
     //[viewController setCardSet: cardSet];
     
-    [viewController startDownload];
+    [viewController loadLesson];
 }
 
 - (void)dealloc {

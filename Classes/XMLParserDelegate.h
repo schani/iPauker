@@ -23,7 +23,7 @@
     long long reverseTimestamp;
 }
 
-- (id) init;
+- (id) initWithLessonName: (NSString*) name;
 
 - (CardSet*) cardSet;
 

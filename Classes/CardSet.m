@@ -9,32 +9,46 @@
 #import "CardSet.h"
 #import "Card.h"
 #import "iPaukerAppDelegate.h"
+#import "PreferencesController.h"
 
 @implementation CardSet
 
-- (id) init
+- (id) initWithName: (NSString*) cardSetName
 {
     self = [super init];
     
+    name = [cardSetName retain];
+    version = [[PreferencesController sharedPreferencesController] versionOfLesson: name];
+
     isFlipped = FALSE;
     cards = [[NSMutableArray arrayWithCapacity: 32] retain];
 
     countsCurrent = NO;
-    
+    highestKey = -1;
+
     return self;
 }
 
 - (void) dealloc
 {
     [cards release];
+    [name release];
 
     [super dealloc];
+}
+
+- (void) setVersion: (int) newVersion
+{
+    version = newVersion;
 }
 
 - (void) addCard: (Card*) card
 {
     [cards addObject: card];
     [card setCardSet: self];
+    
+    if ([card key] > highestKey)
+	highestKey = [card key];
 }
 
 - (int) numTotalCards
@@ -145,6 +159,11 @@
 - (void) cardsMoved
 {
     countsCurrent = FALSE;
+}
+
+- (int) newKey
+{
+    return ++highestKey;
 }
 
 @end

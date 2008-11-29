@@ -52,6 +52,11 @@
 	NSLog(@"Could not write preferences to %@", fileName);
 }
 
+- (NSString*) mainLessonName
+{
+    return @"bla";
+}
+
 - (int) versionOfLesson: (NSString*) lesson
 {
     return [[[[dict valueForKey: @"lessons"] valueForKey: lesson] valueForKey: @"version"] integerValue];

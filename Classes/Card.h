@@ -17,6 +17,7 @@
     CardSet *cardSet;
     CardSide *frontSide;
     CardSide *reverseSide;
+    int key;
 }
 
 - (id) initWithFrontText: (NSString*) ft
@@ -24,7 +25,8 @@
 	  frontTimestamp: (long long) fts
 	     reverseText: (NSString*) rt
 	    reverseBatch: (int) rb
-	reverseTimestamp: (long long) rts;
+	reverseTimestamp: (long long) rts
+                     key: (int) k;
 
 - (void) setCardSet: (CardSet*) cs;
 - (CardSet*) cardSet;
@@ -36,6 +38,9 @@
 - (NSString*) answer;
 
 - (BOOL) isChanged;
+- (void) setNotChanged;
+
+- (int) key;
 
 - (void) writeXMLToString: (NSMutableString*) string;
 

@@ -1,5 +1,7 @@
 #import "ConnectionController.h"
 #import "XMLParserDelegate.h"
+#import "DatabaseController.h"
+#import "PreferencesController.h"
 
 #import "iPaukerViewController.h"
 
@@ -29,14 +31,31 @@
 									   bundle: nil];
 }
 
-- (void) startDownload
+- (void) loadLesson
 {
-    [[ConnectionController sharedConnectionController] startDownloadAndNotify: self];
+    PreferencesController *prefs = [PreferencesController sharedPreferencesController];
+
+    NSLog(@"version is %d", [prefs versionOfLesson: [prefs mainLessonName]]);
+    [self setCardSet: [[DatabaseController sharedDatabaseController] loadLesson: [prefs mainLessonName]]];
 }
 
 - (IBAction) settings: (id) sender
 {
     NSLog(@"settings");
+}
+
+- (void) disableAllButtons
+{
+    [learnNewButton setEnabled: NO];
+    [repeatButton setEnabled: NO];
+    [updateButton setEnabled: NO];
+}
+
+- (void) enableAllButtons
+{
+    [learnNewButton setEnabled: YES];
+    [repeatButton setEnabled: YES];
+    [updateButton setEnabled: YES];
 }
 
 - (IBAction) update: (id) sender
@@ -46,14 +65,19 @@
     NSEnumerator *enumerator;
     Card *card;
 
+    [self disableAllButtons];
+    
     [string appendString: @"<cards format=\"0.1\">\n"];
     enumerator = [changed objectEnumerator];
     while (card = [enumerator nextObject])
 	[card writeXMLToString: string];
     [string appendString: @"</cards>"];
     
-    NSLog(@"%@", string);
-    [[ConnectionController sharedConnectionController] updateLesson: @"bla" withStringData: string];
+    NSLog(@"update: %@", string);
+    [[ConnectionController sharedConnectionController]
+     updateLesson: [[PreferencesController sharedPreferencesController] mainLessonName]
+     withStringData: string
+     andNotify: self];
 }
 
 - (IBAction) learnNew: (id) sender {
@@ -90,11 +114,38 @@
     [self updateStats];
 }
 
+- (void) updateFinishedWithData: (NSData*) updateData
+{
+    NSArray *changed = [cardSet changedCards];
+    NSEnumerator *enumerator;
+    Card *card;
+    
+    enumerator = [changed objectEnumerator];
+    while (card = [enumerator nextObject])
+	[card setNotChanged];
+    
+    NSLog(@"Update finished");
+    
+    [[ConnectionController sharedConnectionController] 
+     startDownloadLesson: [[PreferencesController sharedPreferencesController] mainLessonName]
+     fromVersion: 0
+     andNotify: self];
+}
+
+- (void) updateFailed
+{
+    NSLog(@"Update failed");
+    [self enableAllButtons];
+}
+
 - (void) downloadFinishedWithData: (NSData*) downloadData
 {
     NSXMLParser *parser = [[[NSXMLParser alloc] initWithData: downloadData] autorelease];
-    XMLParserDelegate *delegate = [[[XMLParserDelegate alloc] init] autorelease];
+    NSString *lessonName = [[PreferencesController sharedPreferencesController] mainLessonName];
+    XMLParserDelegate *delegate = [[[XMLParserDelegate alloc] initWithLessonName: lessonName] autorelease];
 
+    NSLog(@"Download data is %@", [[[NSString alloc] initWithData: downloadData encoding: NSUTF8StringEncoding] autorelease]);
+    
     [parser setDelegate: delegate];
     [parser setShouldProcessNamespaces: NO];
     [parser setShouldReportNamespacePrefixes: NO];
@@ -105,17 +156,18 @@
     NSError *parseError = [parser parserError];
     if (parseError) {
 	NSLog (@"XML parse error: %@", [parseError localizedDescription]);
-	CFRunLoopStop([[NSRunLoop currentRunLoop] getCFRunLoop]);
     } else {
 	NSLog (@"Parsed XML");
+	[self setCardSet: [delegate cardSet]];
     }
 
-    [self setCardSet: [delegate cardSet]];
+    [self enableAllButtons];
 }
 
 - (void) downloadFailed
 {
     NSLog(@"Download failed");
+    [self enableAllButtons];
 }
 
 @end

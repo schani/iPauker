@@ -12,8 +12,9 @@
 #import "ConnectionController.h"
 
 enum {
-    StateIdle,
+    StateInit,
     StateLogin,
+    StateLoggedIn,
     StateList,
     StateUpdate
 };
@@ -33,7 +34,7 @@ static ConnectionController *connectionController;
 {
     self = [super init];
 
-    state = StateIdle;
+    state = StateInit;
 
     return self;
 }
@@ -55,7 +56,7 @@ static ConnectionController *connectionController;
     [request setValue: @"application/x-www-form-urlencoded" forHTTPHeaderField: @"Content-Type"];
     [request setHTTPMethod: @"POST"];
     
-    NSLog(@"making request with: %@", string);
+    NSLog(@"making request for path %@ with data %@", path, string);
     
     NSData *data = [string dataUsingEncoding: NSISOLatin1StringEncoding];
     
@@ -77,21 +78,77 @@ static ConnectionController *connectionController;
     return connection;
 }
 
-- (void) startDownloadAndNotify: (id <DownloadClient>) downloadClient
+- (void) login
 {
+    if (state == StateLoggedIn)
+	return;
+    NSAssert(state == StateInit, @"Wrong state");
     [[self makeConnectionForPath: @"_ah/login"
 		  withStringData: @"email=test@example.com&admin=False&action=Login"] retain];
-    client = downloadClient;
     state = StateLogin;
 }
 
-- (void) updateLesson: (NSString*) name withStringData: (NSString*) string
+- (void) processQueue
 {
-    [[self makeConnectionForPath: @"update"
-		  withStringData: [NSString stringWithFormat: @"lesson=%@&data=%@",
-				   [name URLEncode], [string URLEncode]]] retain];
+    NSAssert(state == StateLoggedIn, @"Wrong state");
 
-    state = StateUpdate;
+    if (queuedPath == nil)
+	return;
+
+    client = queuedClient;
+    state = queuedState;
+    downloadData = [[NSMutableData data] retain];
+    [[self makeConnectionForPath: queuedPath withStringData: queuedStringData] retain];
+    
+    [queuedPath release];
+    queuedPath = nil;
+
+    [queuedStringData release];
+    queuedStringData = nil;
+
+    queuedClient = nil;
+}
+
+- (void) queueConnectionWithPath: (NSString*) path
+		      stringData: (NSString*) stringData
+			  client: (id) qClient
+			   state: (int) qState
+{
+    if (state == StateLoggedIn)
+	NSAssert (queuedPath == nil, @"Have queued connection despite being logged in");
+    else
+	NSAssert (state == StateLogin, @"Queueing connection despite processing something else");
+    
+    queuedPath = [path retain];
+    queuedStringData = [stringData retain];
+    queuedClient = [qClient retain];
+    queuedState = qState;
+    
+    if (state == StateLoggedIn)
+	[self processQueue];
+}
+
+- (void) startDownloadLesson: (NSString*) name
+		 fromVersion: (int) version
+		   andNotify: (id <DownloadClient>) downloadClient
+{
+    [self login];
+    [self queueConnectionWithPath: @"list"
+		       stringData: [NSString stringWithFormat: @"lesson=%@&version=%d", [name URLEncode], version]
+			   client: downloadClient
+			    state: StateList];
+}
+
+- (void) updateLesson: (NSString*) name
+       withStringData: (NSString*) string
+	    andNotify: (id <UpdateClient>) updateClient
+{
+    [self login];
+    [self queueConnectionWithPath: @"update"
+		       stringData: [NSString stringWithFormat: @"lesson=%@&data=%@",
+				    [name URLEncode], [string URLEncode]]
+			   client: updateClient
+			    state: StateUpdate];
 }
 
 - (void) connection: (NSURLConnection*) connection didReceiveResponse: (NSURLResponse*) response
@@ -103,6 +160,7 @@ static ConnectionController *connectionController;
 
 - (void)connection: (NSURLConnection*) connection didReceiveData: (NSData*) data
 {
+    NSLog(@"Received");
     if (downloadData)
 	[downloadData appendData: data];
 }
@@ -114,21 +172,24 @@ static ConnectionController *connectionController;
     
     if (state == StateLogin) {
 	for (NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
-	    NSLog(@"%@ - %@\n", [cookie name], [cookie value]);
+	    NSLog(@"cookie %@ - %@\n", [cookie name], [cookie value]);
 	}
-	
-	[[self makeConnectionForPath: @"list" withStringData: @"lesson=bla&version=0"] retain];
-	downloadData = [[NSMutableData data] retain];
-	state = StateList;
+	state = StateLoggedIn;
+	[self processQueue];
     } else if (state == StateList) {
-	[client downloadFinishedWithData: downloadData];
-	[downloadData release];
-	downloadData = nil;
-	state = StateIdle;
+	NSData *data = [downloadData autorelease];
+	id cl = [client autorelease];
 	client = nil;
+	downloadData = nil;
+	state = StateLoggedIn;
+	[cl downloadFinishedWithData: data];
     } else if (state == StateUpdate) {
-	NSLog(@"Finished update");
-	state = StateIdle;
+	NSData *data = [downloadData autorelease];
+	id cl = [client autorelease];
+	client = nil;
+	downloadData = nil;
+	state = StateLoggedIn;
+	[cl updateFinishedWithData: data];
     }
 }
 
@@ -141,7 +202,10 @@ static ConnectionController *connectionController;
     if (state == StateLogin || state == StateList)
 	[client downloadFailed];
     [connection release];
-    state = StateIdle;
+    if (state == StateLogin)
+	state = StateInit;
+    else
+	state = StateLoggedIn;
     client = nil;
 }
 

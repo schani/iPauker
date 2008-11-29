@@ -12,6 +12,9 @@
 @class Card;
 
 @interface CardSet : NSObject {
+    NSString *name;
+    int version;
+    
     BOOL isFlipped;
     NSMutableArray *cards;
     
@@ -19,9 +22,13 @@
     int numLearnedCards;
     int numExpiredCards;
     int numNewCards;
+    
+    int highestKey;
 }
 
-- (id) init;
+- (id) initWithName: (NSString*) cardSetName;
+
+- (void) setVersion: (int) newVersion;
 
 - (void) addCard: (Card*) card;
 
@@ -37,5 +44,7 @@
 - (NSArray*) changedCards;
 
 - (void) cardsMoved;
+
+- (int) newKey;
 
 @end

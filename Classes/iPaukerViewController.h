@@ -4,12 +4,15 @@
 #import "ConnectionController.h"
 #import "iPaukerLearnViewController.h"
 
-@interface iPaukerViewController : UIViewController <DownloadClient>
+@interface iPaukerViewController : UIViewController <DownloadClient, UpdateClient>
 {
     IBOutlet UILabel *expiredLabel;
     IBOutlet UILabel *learnedLabel;
     IBOutlet UILabel *totalLabel;
     IBOutlet UILabel *newLabel;
+    IBOutlet UIBarButtonItem *learnNewButton;
+    IBOutlet UIBarButtonItem *repeatButton;
+    IBOutlet UIBarButtonItem *updateButton;
     CardSet *cardSet;
     iPaukerLearnViewController *learnViewController;
 }
@@ -20,7 +23,7 @@
 - (IBAction)learnNew:(id)sender;
 - (IBAction)repeatExpired:(id)sender;
 
-- (void) startDownload;
+- (void) loadLesson;
 
 - (void) updateStats;
 

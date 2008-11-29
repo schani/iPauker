@@ -36,5 +36,6 @@
 - (BOOL) isExpired;
 
 - (BOOL) isChanged;
+- (void) setChanged: (BOOL) _changed;
 
 @end

@@ -16,6 +16,8 @@
 
 + (PreferencesController*) sharedPreferencesController;
 
+- (NSString*) mainLessonName;
+
 - (int) versionOfLesson: (NSString*) lesson;
 - (void) setVersion: (int) version ofLesson: (NSString*) lesson;
 

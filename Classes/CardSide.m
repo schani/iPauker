@@ -127,4 +127,9 @@ batch_expire_time (int batch)
     return changed;
 }
 
+- (void) setChanged: (BOOL) _changed
+{
+    changed = _changed;
+}
+
 @end

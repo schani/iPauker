@@ -16,11 +16,11 @@ enum {
 
 @implementation XMLParserDelegate
 
-- (id) init
+- (id) initWithLessonName: (NSString*) name
 {
     self = [super init];
 
-    cardSet = [[CardSet alloc] init];
+    cardSet = [[CardSet alloc] initWithName: name];
     state = StateTopLevel;
     
     frontBatch = reverseBatch = -1;
@@ -51,7 +51,10 @@ didStartElement:(NSString *)elementName
  qualifiedName:(NSString *)qName
     attributes:(NSDictionary *)attributeDict
 {
-    if (state == StateTopLevel && [elementName isEqualToString: @"card"]) {
+    if (state == StateTopLevel && [elementName isEqualToString: @"cards"]) {
+	if ([attributeDict valueForKey: @"version"])
+	    [cardSet setVersion: [[attributeDict valueForKey: @"version"] intValue]];
+    } else if (state == StateTopLevel && [elementName isEqualToString: @"card"]) {
 	state = StateInCard;
     } else if (state == StateInCard && [elementName isEqualToString: @"front"]) {
 	frontBatch = [[attributeDict valueForKey: @"batch"] intValue];
@@ -87,7 +90,8 @@ didStartElement:(NSString *)elementName
 					    frontTimestamp: frontTimestamp
 					       reverseText: reverseText
 					      reverseBatch: reverseBatch
-					  reverseTimestamp: reverseTimestamp] autorelease]];
+					  reverseTimestamp: reverseTimestamp
+						       key: [cardSet newKey]] autorelease]];
 	state = StateTopLevel;
     } else if (state == StateInSide && [elementName isEqualToString: @"front"]) {
 	frontText = text;
