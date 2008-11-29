@@ -105,7 +105,8 @@ didStartElement:(NSString *)elementName
 					   reverseText: reverseText
 					  reverseBatch: reverseBatch
 				      reverseTimestamp: reverseTimestamp
-						   key: [cardSet newKey]] autorelease]];
+						   key: [cardSet newKey]] autorelease]
+	       dirty: NO];
 	state = StateTopLevel;
     } else if (state == StateInSide && [elementName isEqualToString: @"front"]) {
 	frontText = text;

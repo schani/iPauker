@@ -96,7 +96,7 @@
 					 reverseTimestamp: sqlite3_column_int64(statement, 7)
 						      key: sqlite3_column_int(statement, 0)] autorelease];
 	    
-	    [cardSet addCard: card];
+	    [cardSet addCard: card dirty: NO];
 	}
     }
     

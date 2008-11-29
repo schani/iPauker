@@ -24,6 +24,9 @@
     int numNewCards;
     
     int highestKey;
+    
+    NSMutableSet *dirtyCards;
+    NSMutableSet *deletedCards;
 }
 
 - (id) initWithName: (NSString*) cardSetName;
@@ -31,7 +34,8 @@
 - (int) version;
 - (void) setVersion: (int) newVersion;
 
-- (void) addCard: (Card*) card;
+- (void) addCard: (Card*) card dirty: (BOOL) dirty;
+- (void) setCardDirty: (Card*) card;
 
 - (void) updateWithDeletedCardSet: (CardSet*) dcs cardSet: (CardSet*) cs;
 

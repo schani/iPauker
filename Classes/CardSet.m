@@ -26,6 +26,9 @@
     countsCurrent = NO;
     highestKey = -1;
 
+    dirtyCards = [[NSMutableSet setWithCapacity: 8] retain];
+    deletedCards = [[NSMutableSet setWithCapacity: 8] retain];
+
     return self;
 }
 
@@ -33,6 +36,8 @@
 {
     [cards release];
     [name release];
+    [dirtyCards release];
+    [deletedCards release];
 
     [super dealloc];
 }
@@ -47,7 +52,7 @@
     version = newVersion;
 }
 
-- (void) addCard: (Card*) card
+- (void) addCard: (Card*) card dirty: (BOOL) dirty
 {
     [cards addObject: card];
     [card setCardSet: self];
@@ -56,16 +61,23 @@
 	highestKey = [card key];
 }
 
+- (void) setCardDirty: (Card*) card
+{
+    [dirtyCards addObject: card];
+}
+
 - (void) replaceCardAtIndex: (NSUInteger) index withCard: (Card*) card
 {
     Card *oldCard = [cards objectAtIndex: index];
     
     [card setKey: [oldCard key]];
     [cards replaceObjectAtIndex: index withObject: card];
+    [self setCardDirty: card];
 }
 
 - (void) removeCardAtIndex: (NSUInteger) index
 {
+    [deletedCards addObject: [cards objectAtIndex: index]];
     [cards removeObjectAtIndex: index];
 }
 
@@ -85,10 +97,12 @@
     while (card = [enumerator nextObject]) {
 	NSUInteger index = [cards indexOfObject: card];
 	NSAssert(![card isChanged], @"New card is marked as changed");
-	if (index == NSNotFound)
-	    [self addCard: card];
-	else
+	if (index == NSNotFound) {
+	    [card setKey: [self newKey]];
+	    [self addCard: card dirty: YES];
+	} else {
 	    [self replaceCardAtIndex: index withCard: card];
+	}
     }
 }
 

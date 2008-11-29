@@ -47,7 +47,7 @@
 
 - (void) markChange
 {
-    changed = YES;
+    [self setChanged: YES];
 
     [(iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate] updateTime];
     timestamp = [(iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate] currentTime];
@@ -129,7 +129,11 @@ batch_expire_time (int batch)
 
 - (void) setChanged: (BOOL) _changed
 {
+    if ((changed && _changed) || (!changed && !_changed))
+	return;
     changed = _changed;
+    if (changed)
+	[[card cardSet] setCardDirty: card];
 }
 
 @end
