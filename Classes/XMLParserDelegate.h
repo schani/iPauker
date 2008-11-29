@@ -11,8 +11,10 @@
 
 @interface XMLParserDelegate : NSObject {
     CardSet *cardSet;
+    CardSet *deletedCardSet;
     int state;
     NSMutableString *text;
+    BOOL deleted;
 
     int frontBatch;
     NSString *frontText;
@@ -26,5 +28,6 @@
 - (id) initWithLessonName: (NSString*) name;
 
 - (CardSet*) cardSet;
+- (CardSet*) deletedCardSet;
 
 @end

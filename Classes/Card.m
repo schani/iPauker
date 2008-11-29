@@ -84,6 +84,20 @@
     return key;
 }
 
+- (void) setKey: (int) _key
+{
+    key = _key;
+}
+
+- (BOOL) isEqual: (id) obj
+{
+    Card *card;
+    if (![obj isKindOfClass: [Card class]])
+	return NO;
+    card = (Card*)obj;
+    return [[frontSide text] isEqual: [card->frontSide text]] && [[reverseSide text] isEqual: [card->reverseSide text]];
+}
+
 - (void) writeXMLToString: (NSMutableString*) string
 {
     [string appendFormat: @"<card><front batch=\"%d\"", [frontSide batch]];

@@ -28,9 +28,12 @@
 
 - (id) initWithName: (NSString*) cardSetName;
 
+- (int) version;
 - (void) setVersion: (int) newVersion;
 
 - (void) addCard: (Card*) card;
+
+- (void) updateWithDeletedCardSet: (CardSet*) dcs cardSet: (CardSet*) cs;
 
 - (int) numTotalCards;
 - (int) numLearnedCards;

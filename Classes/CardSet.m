@@ -37,6 +37,11 @@
     [super dealloc];
 }
 
+- (int) version
+{
+    return version;
+}
+
 - (void) setVersion: (int) newVersion
 {
     version = newVersion;
@@ -49,6 +54,42 @@
     
     if ([card key] > highestKey)
 	highestKey = [card key];
+}
+
+- (void) replaceCardAtIndex: (NSUInteger) index withCard: (Card*) card
+{
+    Card *oldCard = [cards objectAtIndex: index];
+    
+    [card setKey: [oldCard key]];
+    [cards replaceObjectAtIndex: index withObject: card];
+}
+
+- (void) removeCardAtIndex: (NSUInteger) index
+{
+    [cards removeObjectAtIndex: index];
+}
+
+- (void) updateWithDeletedCardSet: (CardSet*) dcs cardSet: (CardSet*) cs;
+{
+    NSEnumerator *enumerator;
+    Card *card;
+
+    enumerator = [dcs->cards objectEnumerator];
+    while (card = [enumerator nextObject]) {
+	NSUInteger index = [cards indexOfObject: card];
+	NSAssert(index != NSNotFound, @"Deleted card is already gone");
+	[self removeCardAtIndex: index];
+    }
+    
+    enumerator = [cs->cards objectEnumerator];
+    while (card = [enumerator nextObject]) {
+	NSUInteger index = [cards indexOfObject: card];
+	NSAssert(![card isChanged], @"New card is marked as changed");
+	if (index == NSNotFound)
+	    [self addCard: card];
+	else
+	    [self replaceCardAtIndex: index withCard: card];
+    }
 }
 
 - (int) numTotalCards

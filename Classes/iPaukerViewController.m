@@ -114,6 +114,16 @@
     [self updateStats];
 }
 
+- (void) updateWithXMLParserDelegate: (XMLParserDelegate*) delegate
+{
+    PreferencesController *prefs = [PreferencesController sharedPreferencesController];
+
+    [cardSet updateWithDeletedCardSet: [delegate deletedCardSet]
+			      cardSet: [delegate cardSet]];
+    [prefs setVersion: [[delegate cardSet] version] ofLesson: [prefs mainLessonName]];
+    [self updateStats];
+}
+
 - (void) updateFinishedWithData: (NSData*) updateData
 {
     NSArray *changed = [cardSet changedCards];
@@ -158,7 +168,7 @@
 	NSLog (@"XML parse error: %@", [parseError localizedDescription]);
     } else {
 	NSLog (@"Parsed XML");
-	[self setCardSet: [delegate cardSet]];
+	[self updateWithXMLParserDelegate: delegate];
     }
 
     [self enableAllButtons];

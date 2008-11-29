@@ -21,6 +21,7 @@ enum {
     self = [super init];
 
     cardSet = [[CardSet alloc] initWithName: name];
+    deletedCardSet = [[CardSet alloc] initWithName: name];
     state = StateTopLevel;
     
     frontBatch = reverseBatch = -1;
@@ -34,6 +35,7 @@ enum {
 - (void) dealloc
 {
     [cardSet release];
+    [deletedCardSet release];
     [frontText release];
     [reverseText release];
 
@@ -43,6 +45,11 @@ enum {
 - (CardSet*) cardSet
 {
     return cardSet;
+}
+
+- (CardSet*) deletedCardSet
+{
+    return deletedCardSet;
 }
 
 - (void)parser:(NSXMLParser *)parser
@@ -56,6 +63,11 @@ didStartElement:(NSString *)elementName
 	    [cardSet setVersion: [[attributeDict valueForKey: @"version"] intValue]];
     } else if (state == StateTopLevel && [elementName isEqualToString: @"card"]) {
 	state = StateInCard;
+	if ([attributeDict valueForKey: @"deleted"]
+	    && [[attributeDict valueForKey: @"deleted"] isEqualToString: @"True"])
+	    deleted = YES;
+	else
+	    deleted = NO;
     } else if (state == StateInCard && [elementName isEqualToString: @"front"]) {
 	frontBatch = [[attributeDict valueForKey: @"batch"] intValue];
 	if ([attributeDict valueForKey: @"timestamp"]
@@ -85,13 +97,15 @@ didStartElement:(NSString *)elementName
  qualifiedName:(NSString *)qName
 {
     if (state == StateInCard && [elementName isEqualToString: @"card"]) {
-	[cardSet addCard: [[[Card alloc] initWithFrontText: frontText
-						frontBatch: frontBatch
-					    frontTimestamp: frontTimestamp
-					       reverseText: reverseText
-					      reverseBatch: reverseBatch
-					  reverseTimestamp: reverseTimestamp
-						       key: [cardSet newKey]] autorelease]];
+	CardSet *set = deleted ? deletedCardSet : cardSet;
+
+	[set addCard: [[[Card alloc] initWithFrontText: frontText
+					    frontBatch: frontBatch
+					frontTimestamp: frontTimestamp
+					   reverseText: reverseText
+					  reverseBatch: reverseBatch
+				      reverseTimestamp: reverseTimestamp
+						   key: [cardSet newKey]] autorelease]];
 	state = StateTopLevel;
     } else if (state == StateInSide && [elementName isEqualToString: @"front"]) {
 	frontText = text;

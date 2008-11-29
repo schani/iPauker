@@ -28,7 +28,7 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
 
-    fileName = [documentsDirectory stringByAppendingPathComponent: @"ipauker.plist"];
+    fileName = [[documentsDirectory stringByAppendingPathComponent: @"ipauker.plist"] retain];
     
     NSData *data = [NSData dataWithContentsOfFile: fileName];
     dict = (NSMutableDictionary*)[[NSPropertyListSerialization 

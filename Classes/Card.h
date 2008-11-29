@@ -41,6 +41,7 @@
 - (void) setNotChanged;
 
 - (int) key;
+- (void) setKey: (int) _key;
 
 - (void) writeXMLToString: (NSMutableString*) string;
 
