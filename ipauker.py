@@ -160,7 +160,7 @@ class CardsParser(ParserBase):
             self.state = IN_CARD
         elif self.state == IN_CARD and name == 'front':
             self.front_batch = int(attrs['batch'])
-            if attrs['timestamp'] == 'None':
+            if not attrs.has_key('timestamp') or attrs['timestamp'] == 'None':
                 self.front_timestamp = None
             else:
                 self.front_timestamp = int(attrs['timestamp'])
@@ -168,7 +168,7 @@ class CardsParser(ParserBase):
             self.state = IN_SIDE
         elif self.state == IN_CARD and name == 'reverse':
             self.reverse_batch = int(attrs['batch'])
-            if attrs['timestamp'] == 'None':
+            if not attrs.has_key('timestamp') or attrs['timestamp'] == 'None':
                 self.reverse_timestamp = None
             else:
                 self.reverse_timestamp = int(attrs['timestamp'])
