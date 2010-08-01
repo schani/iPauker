@@ -80,7 +80,7 @@
     if (repeatingKnown) {
 	card = [knownCards objectAtIndex: 0];
 	[knownCards removeObjectAtIndex: 0];
-	[[card questionSide] nextBatch];
+	[[card questionSide] setLearned];
     } else {
 	card = [repeatCards objectAtIndex: 0];
 	[repeatCards removeObjectAtIndex: 0];

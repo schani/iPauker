@@ -30,6 +30,7 @@
 
 - (BOOL) isNew;
 - (void) setNew;
+- (void) setLearned;
 
 - (long long) timestamp;
 

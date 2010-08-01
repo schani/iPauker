@@ -57,6 +57,8 @@
 
 - (void) nextBatch
 {
+    NSAssert (![self isNew], @"Cannot increase batch of new card");
+
     ++batch;
     [self markChange];
 }
@@ -69,6 +71,14 @@
 - (void) setNew
 {
     batch = -2;
+    [self markChange];
+}
+
+- (void) setLearned
+{
+    NSAssert ([self isNew], @"Cannot set learned of card that is not new");
+
+    batch = 1;
     [self markChange];
 }
 
