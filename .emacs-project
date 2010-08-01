@@ -1,0 +1,2 @@
+(setl ffip-regexp ".*\\.(c|h|m)")
+(setl compile-command "(cd ~/Work/ipauker/iPauker ; xcodebuild -configuration Debug)")
