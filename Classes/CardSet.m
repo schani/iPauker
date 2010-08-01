@@ -89,8 +89,13 @@
     enumerator = [dcs->cards objectEnumerator];
     while (card = [enumerator nextObject]) {
 	NSUInteger index = [cards indexOfObject: card];
-	NSAssert(index != NSNotFound, @"Deleted card is already gone");
-	[self removeCardAtIndex: index];
+	/*
+	 * It could happen that we get a delete updated for a card
+	 * that we don't know about because it was created and deleted
+	 * since the last update
+	 */
+	if (index != NSNotFound)
+	    [self removeCardAtIndex: index];
     }
     
     enumerator = [cs->cards objectEnumerator];
