@@ -110,6 +110,8 @@
 
 - (void) setCardSet: (CardSet*) cs
 {
+    if (cardSet)
+	[cardSet autorelease];
     cardSet = [cs retain];
     [self updateStats];
 }
