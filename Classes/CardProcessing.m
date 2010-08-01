@@ -25,4 +25,19 @@
     started = YES;
 }
 
+- (void) next
+{
+    [self doesNotRecognizeSelector: _cmd];
+}
+
+- (void) correct
+{
+    [self doesNotRecognizeSelector: _cmd];
+}
+
+- (void) incorrect
+{
+    [self doesNotRecognizeSelector: _cmd];
+}
+
 @end
