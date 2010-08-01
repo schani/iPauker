@@ -48,7 +48,7 @@ static ConnectionController *connectionController;
 
 - (NSMutableURLRequest*) makeRequestForPath: (NSString*) path withStringData: (NSString*) string
 {
-    NSURL *url = [NSURL URLWithString: [NSString stringWithFormat: @"http://192.168.1.130:8080/%@", path]];
+    NSURL *url = [NSURL URLWithString: [NSString stringWithFormat: @"http://127.0.0.1:8080/%@", path]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: url
 							   cachePolicy: NSURLRequestUseProtocolCachePolicy
 						       timeoutInterval: 60.0];
