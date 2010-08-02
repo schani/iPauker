@@ -25,6 +25,7 @@
     
     int highestKey;
     
+    NSMutableSet *addedCards;
     NSMutableSet *dirtyCards;
     NSMutableSet *deletedCards;
 }
@@ -53,5 +54,7 @@
 - (void) cardsMoved;
 
 - (int) newKey;
+
+- (void) save;
 
 @end

@@ -122,6 +122,7 @@
 
     [cardSet updateWithDeletedCardSet: [delegate deletedCardSet]
 			      cardSet: [delegate cardSet]];
+    [cardSet save];
     [prefs setVersion: [[delegate cardSet] version] ofLesson: [prefs mainLessonName]];
     [self updateStats];
 }

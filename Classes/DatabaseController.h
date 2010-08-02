@@ -19,4 +19,8 @@
 
 - (CardSet*) loadLesson: (NSString*) lesson;
 
+- (void) insertCards: (NSSet*) set forLesson: (NSString*) lesson;
+- (void) updateCards: (NSSet*) cards forLesson: (NSString*) lesson;
+- (void) deleteCards: (NSSet*) cards forLesson: (NSString*) lesson;
+
 @end

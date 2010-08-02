@@ -8,6 +8,10 @@
 
 #import "DatabaseController.h"
 
+static sqlite3_stmt *insert_stmt = NULL;
+static sqlite3_stmt *update_stmt = NULL;
+static sqlite3_stmt *delete_stmt = NULL;
+
 @implementation DatabaseController
 
 + (DatabaseController*) sharedDatabaseController
@@ -106,6 +110,98 @@
     sqlite3_finalize(statement);
     
     return cardSet;
+}
+
+- (void) insertCards: (NSSet*) set forLesson: (NSString*) lesson
+{
+    NSEnumerator *enumerator;
+    Card *card;
+
+    if (insert_stmt == NULL) {
+	char *sql = "INSERT INTO cards (key, lesson, front_text, front_batch, front_timestamp, " \
+				       "reverse_text, reverse_batch, reverse_timestamp, changed) " \
+			   "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	
+	if (sqlite3_prepare_v2(database, sql, -1, &insert_stmt, NULL) != SQLITE_OK)
+	    NSAssert(NO, @"Could not prepare SQL statement");
+    }
+    
+    enumerator = [set objectEnumerator];
+    while (card = [enumerator nextObject]) {
+	sqlite3_bind_int(insert_stmt, 1, [card key]);
+	sqlite3_bind_text(insert_stmt, 2, [lesson UTF8String], -1, SQLITE_TRANSIENT);
+
+	sqlite3_bind_text(insert_stmt, 3, [[[card frontSide] text] UTF8String], -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(insert_stmt, 4, [[card frontSide] batch]);
+	sqlite3_bind_int64(insert_stmt, 5, [[card frontSide] timestamp]);
+
+	sqlite3_bind_text(insert_stmt, 6, [[[card reverseSide] text] UTF8String], -1, SQLITE_TRANSIENT);
+	sqlite3_bind_int(insert_stmt, 7, [[card reverseSide] batch]);
+	sqlite3_bind_int64(insert_stmt, 8, [[card reverseSide] timestamp]);
+
+	sqlite3_bind_int(insert_stmt, 9, [card isChanged]);
+	
+	if (sqlite3_step(insert_stmt) == SQLITE_ERROR)
+	    NSAssert1(NO, @"Could not insert row: %s", sqlite3_errmsg(database));
+	
+	sqlite3_reset(insert_stmt);
+    }
+}
+
+- (void) updateCards: (NSSet*) cards forLesson: (NSString*) lesson
+{
+    NSEnumerator *enumerator;
+    Card *card;
+    
+    if (update_stmt == NULL) {
+	char *sql = "UPDATE cards SET front_batch=?, front_timestamp=?, " \
+				     "reverse_batch=?, reverse_timestamp=?, changed=? " \
+	                         "WHERE key=?";
+	
+	if (sqlite3_prepare_v2(database, sql, -1, &update_stmt, NULL) != SQLITE_OK)
+	    NSAssert(NO, @"Could not prepare SQL statement");
+    }
+    
+    enumerator = [cards objectEnumerator];
+    while (card = [enumerator nextObject]) {
+	sqlite3_bind_int(update_stmt, 1, [[card frontSide] batch]);
+	sqlite3_bind_int64(update_stmt, 2, [[card frontSide] timestamp]);
+
+	sqlite3_bind_int(update_stmt, 3, [[card reverseSide] batch]);
+	sqlite3_bind_int64(update_stmt, 4, [[card reverseSide] timestamp]);
+
+	sqlite3_bind_int(update_stmt, 5, [card isChanged]);
+
+	sqlite3_bind_int(update_stmt, 6, [card key]);
+
+	if (sqlite3_step(update_stmt) == SQLITE_ERROR)
+	    NSAssert1(NO, @"Could not insert row: %s", sqlite3_errmsg(database));
+
+	sqlite3_reset(update_stmt);
+    }
+}
+
+- (void) deleteCards: (NSSet*) cards forLesson: (NSString*) lesson
+{
+    NSEnumerator *enumerator;
+    Card *card;
+
+    if (delete_stmt == NULL) {
+	char *sql = "DELETE FROM cards WHERE key=?";
+
+	if (sqlite3_prepare_v2(database, sql, -1, &delete_stmt, NULL) != SQLITE_OK)
+	    NSAssert (NO, @"Could not prepare SQL statement");
+    }
+
+    enumerator = [cards objectEnumerator];
+    while (card = [enumerator nextObject]) {
+	sqlite3_bind_int (delete_stmt, 1, [card key]);
+
+	if (sqlite3_step (delete_stmt) == SQLITE_ERROR)
+	    NSAssert1(NO, @"Could not delete row: %s", sqlite3_errmsg (database));
+
+	sqlite3_reset (delete_stmt);
+    }
 }
 
 @end

@@ -39,6 +39,9 @@
 - (NSString*) question;
 - (NSString*) answer;
 
+- (CardSide*) frontSide;
+- (CardSide*) reverseSide;
+
 - (BOOL) isChanged;
 - (void) setNotChanged;
 

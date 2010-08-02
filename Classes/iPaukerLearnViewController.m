@@ -68,32 +68,36 @@
 	[super dealloc];
 }
 
-- (BOOL) learnNewFromCardSet: (CardSet*) cardSet
+- (BOOL) learnNewFromCardSet: (CardSet*) _cardSet
 {
     NSArray *cards;
-    
+
     NSAssert (!processing, @"Already processing");
+    NSAssert (!cardSet, @"Have cardSet");
 
-    cards = [cardSet newCards];
-
+    cards = [_cardSet newCards];
     if ([cards count] == 0)
 	return NO;
 
+    cardSet = [_cardSet retain];
+
     processing = [[LearnProcessing alloc] initWithController: self cards: cards];
-    
+
     return YES;
 }
 
-- (BOOL) repeatExpiredFromCardSet: (CardSet*) cardSet
+- (BOOL) repeatExpiredFromCardSet: (CardSet*) _cardSet
 {
     NSArray *cards;
 
     NSAssert (!processing, @"Already processing");
+    NSAssert (!cardSet, @"Have cardSet");
 
-    cards = [cardSet expiredCards];
-
+    cards = [_cardSet expiredCards];
     if ([cards count] == 0)
 	return NO;
+
+    cardSet = [_cardSet retain];
 
     processing = [[RepeatProcessing alloc] initWithController: self cards: cards];
 
@@ -167,6 +171,11 @@
     
     [processing autorelease];
     processing = nil;
+
+    [cardSet save];
+
+    [cardSet autorelease];
+    cardSet = nil;
 
     [self dismissModalViewControllerAnimated: TRUE];
 }

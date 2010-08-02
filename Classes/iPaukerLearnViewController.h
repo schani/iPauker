@@ -23,6 +23,7 @@
 
     CardProcessing *processing;
     Card *card;
+    CardSet *cardSet;
 }
 
 - (IBAction)cancel:(id)sender;

@@ -81,6 +81,16 @@
     return [[self answerSide] text];
 }
 
+- (CardSide*) frontSide
+{
+    return frontSide;
+}
+
+- (CardSide*) reverseSide
+{
+    return reverseSide;
+}
+
 - (BOOL) isChanged
 {
     return [frontSide isChanged] || [reverseSide isChanged];

@@ -10,6 +10,7 @@
 #import "Card.h"
 #import "iPaukerAppDelegate.h"
 #import "PreferencesController.h"
+#import "DatabaseController.h"
 
 @implementation CardSet
 
@@ -26,6 +27,7 @@
     countsCurrent = NO;
     highestKey = -1;
 
+    addedCards = [[NSMutableSet setWithCapacity: 8] retain];
     dirtyCards = [[NSMutableSet setWithCapacity: 8] retain];
     deletedCards = [[NSMutableSet setWithCapacity: 8] retain];
 
@@ -36,6 +38,7 @@
 {
     [cards release];
     [name release];
+    [addedCards release];
     [dirtyCards release];
     [deletedCards release];
 
@@ -61,6 +64,9 @@
     
     if ([card key] > highestKey)
 	highestKey = [card key];
+    
+    if (dirty)
+	[addedCards addObject: card];
 }
 
 - (void) setCardDirty: (Card*) card
@@ -237,6 +243,20 @@
 - (int) newKey
 {
     return ++highestKey;
+}
+
+- (void) save
+{
+    DatabaseController *db = [DatabaseController sharedDatabaseController];
+
+    [db insertCards: addedCards forLesson: name];
+    [addedCards removeAllObjects];
+
+    [db updateCards: dirtyCards forLesson: name];
+    [dirtyCards removeAllObjects];
+
+    [db deleteCards: deletedCards forLesson: name];
+    [deletedCards removeAllObjects];
 }
 
 @end
