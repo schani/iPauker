@@ -53,4 +53,11 @@
     [super dealloc];
 }
 
++ (long long) updateAndGetTime
+{
+    iPaukerAppDelegate *delegate = (iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate];
+    [delegate updateTime];
+    return [delegate currentTime];
+}
+
 @end

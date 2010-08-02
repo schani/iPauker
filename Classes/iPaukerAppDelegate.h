@@ -24,5 +24,6 @@
 - (void) updateTime;
 - (long long) currentTime;
 
-@end
++ (long long) updateAndGetTime;
 
+@end

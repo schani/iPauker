@@ -48,10 +48,7 @@
 - (void) markChange
 {
     [self setChanged: YES];
-
-    [(iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate] updateTime];
-    timestamp = [(iPaukerAppDelegate*)[[UIApplication sharedApplication] delegate] currentTime];
-
+    timestamp = [iPaukerAppDelegate updateAndGetTime];
     [[card cardSet] cardsMoved];
 }
 
