@@ -28,6 +28,8 @@
 	reverseTimestamp: (long long) rts
                      key: (int) k;
 
+- (Card*) copy;
+
 - (void) setCardSet: (CardSet*) cs;
 - (CardSet*) cardSet;
 

@@ -54,6 +54,8 @@
 
 - (void) addCard: (Card*) card dirty: (BOOL) dirty
 {
+    if ([card cardSet])
+	card = [card copy];
     [cards addObject: card];
     [card setCardSet: self];
     
@@ -69,16 +71,27 @@
 - (void) replaceCardAtIndex: (NSUInteger) index withCard: (Card*) card
 {
     Card *oldCard = [cards objectAtIndex: index];
-    
+
+    if ([card cardSet])
+	card = [card copy];
+
     [card setKey: [oldCard key]];
+    [oldCard setCardSet: nil];
+
     [cards replaceObjectAtIndex: index withObject: card];
     [self setCardDirty: card];
 }
 
 - (void) removeCardAtIndex: (NSUInteger) index
 {
-    [deletedCards addObject: [cards objectAtIndex: index]];
+    Card *card = [cards objectAtIndex: index];
+
+    NSAssert ([card cardSet] == self, @"Card has the wrong card set.");
+
+    [deletedCards addObject: card];
+
     [cards removeObjectAtIndex: index];
+    [card setCardSet: nil];
 }
 
 - (void) updateWithDeletedCardSet: (CardSet*) dcs cardSet: (CardSet*) cs;

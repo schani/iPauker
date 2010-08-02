@@ -38,8 +38,21 @@
     [super dealloc];
 }
 
+- (Card*) copy
+{
+    return [[[Card alloc] initWithFrontText: [frontSide text]
+				 frontBatch: [frontSide batch]
+			     frontTimestamp: [frontSide timestamp]
+				reverseText: [reverseSide text]
+			       reverseBatch: [reverseSide batch]
+			   reverseTimestamp: [reverseSide timestamp]
+					key: key] autorelease];
+}
+
 - (void) setCardSet: (CardSet*) cs
 {
+    if (cs)
+	NSAssert (!cardSet, @"Can only set card set once.");
     cardSet = cs;
 }
 
