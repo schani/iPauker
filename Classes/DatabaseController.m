@@ -88,10 +88,12 @@
     
     if (sqlite3_prepare_v2(database, sql, -1, &statement, NULL) == SQLITE_OK) {
 	while (sqlite3_step(statement) == SQLITE_ROW) {
-	    Card *card = [[[Card alloc] initWithFrontText: [NSString stringWithCString: (char*)sqlite3_column_text(statement, 2)]
+	    Card *card = [[[Card alloc] initWithFrontText: [NSString stringWithCString: (char*)sqlite3_column_text(statement, 2)
+									      encoding: NSUTF8StringEncoding]
 					       frontBatch: sqlite3_column_int(statement, 3)
 					   frontTimestamp: sqlite3_column_int64(statement, 4)
-					      reverseText: [NSString stringWithCString: (char*)sqlite3_column_text(statement, 5)]
+					      reverseText: [NSString stringWithCString: (char*)sqlite3_column_text(statement, 5)
+									      encoding: NSUTF8StringEncoding]
 					     reverseBatch: sqlite3_column_int(statement, 6)
 					 reverseTimestamp: sqlite3_column_int64(statement, 7)
 						      key: sqlite3_column_int(statement, 0)] autorelease];
