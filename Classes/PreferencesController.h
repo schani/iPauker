@@ -21,4 +21,7 @@
 - (int) versionOfLesson: (NSString*) lesson;
 - (void) setVersion: (int) version ofLesson: (NSString*) lesson;
 
+- (long long) ultraShortTermMemoryDuration;
+- (long long) shortTermMemoryDuration;
+
 @end

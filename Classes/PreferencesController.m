@@ -91,4 +91,14 @@ force_dict (NSMutableDictionary *dict, NSString *key)
     [self writeData];
 }
 
+- (long long) ultraShortTermMemoryDuration
+{
+    return 18 * 1000;
+}
+
+- (long long) shortTermMemoryDuration
+{
+    return 12 * 60 * 1000;
+}
+
 @end
