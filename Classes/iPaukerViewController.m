@@ -137,6 +137,7 @@
 - (void) updateFinishedWithData: (NSData*) updateData
 {
     NSArray *changed = [cardSet changedCards];
+    NSString *lesson = [[PreferencesController sharedPreferencesController] mainLessonName];
     NSEnumerator *enumerator;
     Card *card;
     
@@ -145,11 +146,11 @@
 	[card setNotChanged];
     
     NSLog(@"Update finished");
-    
-    [[ConnectionController sharedConnectionController] 
-     startDownloadLesson: [[PreferencesController sharedPreferencesController] mainLessonName]
-     fromVersion: 0
-     andNotify: self];
+
+    [[ConnectionController sharedConnectionController]
+	startDownloadLesson: lesson
+		fromVersion: [[PreferencesController sharedPreferencesController] versionOfLesson: lesson]
+		  andNotify: self];
 }
 
 - (void) updateFailed
