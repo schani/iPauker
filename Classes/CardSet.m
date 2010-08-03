@@ -249,12 +249,15 @@
 {
     DatabaseController *db = [DatabaseController sharedDatabaseController];
 
+    NSLog (@"inserting %d cards", [addedCards count]);
     [db insertCards: addedCards forLesson: name];
     [addedCards removeAllObjects];
 
+    NSLog (@"updating %d cards", [dirtyCards count]);
     [db updateCards: dirtyCards forLesson: name];
     [dirtyCards removeAllObjects];
 
+    NSLog (@"deleting %d cards", [deletedCards count]);
     [db deleteCards: deletedCards forLesson: name];
     [deletedCards removeAllObjects];
 }

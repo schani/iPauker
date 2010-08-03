@@ -22,9 +22,7 @@
     text = [t retain];
     batch = b;
     timestamp = ts;
-    
-    changed = NO;
-    
+
     return self;
 }
 
@@ -47,7 +45,7 @@
 
 - (void) markChange
 {
-    [self setChanged: YES];
+    [card setChanged];
     timestamp = [iPaukerAppDelegate updateAndGetTime];
     [[card cardSet] cardsMoved];
 }
@@ -127,20 +125,6 @@ batch_expire_time (int batch)
     long long expireTimestamp = [self expireTimestamp];
 
     return expireTimestamp < currentTime;
-}
-
-- (BOOL) isChanged
-{
-    return changed;
-}
-
-- (void) setChanged: (BOOL) _changed
-{
-    if ((changed && _changed) || (!changed && !_changed))
-	return;
-    changed = _changed;
-    if (changed)
-	[[card cardSet] setCardDirty: card];
 }
 
 @end

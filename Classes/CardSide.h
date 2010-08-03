@@ -17,8 +17,6 @@
     NSString *text;
     int batch;
     long long timestamp;
-    
-    BOOL changed;
 }
 
 - (id) initForCard: (Card*) c withText: (NSString*) t batch: (int) b timestamp: (long long) ts;
@@ -35,8 +33,5 @@
 - (long long) timestamp;
 
 - (BOOL) isExpired;
-
-- (BOOL) isChanged;
-- (void) setChanged: (BOOL) _changed;
 
 @end

@@ -103,6 +103,8 @@ static sqlite3_stmt *delete_stmt = NULL;
 						      key: sqlite3_column_int(statement, 0)] autorelease];
 	    
 	    [cardSet addCard: card dirty: NO];
+	    if (sqlite3_column_int (statement, 8))
+		[card setChanged];
 	}
     }
     

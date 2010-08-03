@@ -1,3 +1,4 @@
+* TODO Use current version when downloading, not 0
+* TODO Use PUT for update, not GET
 * TODO Do something about the proximity of "Incorrect" and "Cancel"
 If they stay this close together, at least ask before cancelling.
-* TODO Remember between runs of the program which cards to send to update

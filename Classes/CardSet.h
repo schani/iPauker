@@ -24,7 +24,8 @@
     int numNewCards;
     
     int highestKey;
-    
+
+    // cards that are not yet updated in the database
     NSMutableSet *addedCards;
     NSMutableSet *dirtyCards;
     NSMutableSet *deletedCards;

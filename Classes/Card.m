@@ -26,6 +26,7 @@
     frontSide = [[CardSide alloc] initForCard: self withText: ft batch: fb timestamp: fts];
     reverseSide = [[CardSide alloc] initForCard: self withText: rt batch: rb timestamp: rts];
     key = k;
+    changed = NO;
 
     return self;
 }
@@ -40,13 +41,16 @@
 
 - (Card*) copy
 {
-    return [[[Card alloc] initWithFrontText: [frontSide text]
-				 frontBatch: [frontSide batch]
-			     frontTimestamp: [frontSide timestamp]
-				reverseText: [reverseSide text]
-			       reverseBatch: [reverseSide batch]
-			   reverseTimestamp: [reverseSide timestamp]
-					key: key] autorelease];
+    Card *card = [[[Card alloc] initWithFrontText: [frontSide text]
+				       frontBatch: [frontSide batch]
+				   frontTimestamp: [frontSide timestamp]
+				      reverseText: [reverseSide text]
+				     reverseBatch: [reverseSide batch]
+				 reverseTimestamp: [reverseSide timestamp]
+					      key: key] autorelease];
+    if (changed)
+	[card setChanged];
+    return card;
 }
 
 - (void) setCardSet: (CardSet*) cs
@@ -93,13 +97,27 @@
 
 - (BOOL) isChanged
 {
-    return [frontSide isChanged] || [reverseSide isChanged];
+    return changed;
+}
+
+- (void) setChanged
+{
+    if (changed)
+	return;
+
+    changed = YES;
+    if (cardSet)
+	[cardSet setCardDirty: self];
 }
 
 - (void) setNotChanged
 {
-    [frontSide setChanged: NO];
-    [reverseSide setChanged: NO];
+    if (!changed)
+	return;
+
+    changed = NO;
+    if (cardSet)
+	[cardSet setCardDirty: self];
 }
 
 - (int) key

@@ -17,6 +17,8 @@
     CardSet *cardSet;
     CardSide *frontSide;
     CardSide *reverseSide;
+    // changed means it needs synchronization
+    BOOL changed;
     int key;
 }
 
@@ -43,6 +45,7 @@
 - (CardSide*) reverseSide;
 
 - (BOOL) isChanged;
+- (void) setChanged;
 - (void) setNotChanged;
 
 - (int) key;

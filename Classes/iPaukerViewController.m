@@ -116,6 +116,9 @@
     [self updateStats];
 }
 
+/*
+ * Update the card set and save it.
+ */
 - (void) updateWithXMLParserDelegate: (XMLParserDelegate*) delegate
 {
     PreferencesController *prefs = [PreferencesController sharedPreferencesController];
@@ -127,6 +130,10 @@
     [self updateStats];
 }
 
+/*
+ * First the update finishes.  We set the card not changed and start
+ * downloading the diff to the newest version.
+ */
 - (void) updateFinishedWithData: (NSData*) updateData
 {
     NSArray *changed = [cardSet changedCards];
@@ -151,6 +158,9 @@
     [self enableAllButtons];
 }
 
+/*
+ * The diff download finished.  Parse it and update the card set.
+ */
 - (void) downloadFinishedWithData: (NSData*) downloadData
 {
     NSXMLParser *parser = [[[NSXMLParser alloc] initWithData: downloadData] autorelease];
@@ -177,9 +187,14 @@
     [self enableAllButtons];
 }
 
+/*
+ * The download failed.  We need to save the card set because we have
+ * done the update which might have changed the card set.
+ */
 - (void) downloadFailed
 {
     NSLog(@"Download failed");
+    [cardSet save];
     [self enableAllButtons];
 }
 
