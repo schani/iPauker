@@ -31,17 +31,27 @@
 									   bundle: nil];
 }
 
+- (void) loadPreferencesViewController
+{
+    if (!preferencesViewController) {
+	preferencesViewController = [[iPaukerPreferencesViewController alloc] initWithNibName: @"iPaukerPreferencesView"
+										       bundle: nil];
+	[preferencesViewController setIPaukerViewController: self];
+    }
+}
+
 - (void) loadLesson
 {
-    PreferencesController *prefs = [PreferencesController sharedPreferencesController];
-
-    NSLog(@"version is %d", [prefs versionOfLesson: [prefs mainLessonName]]);
-    [self setCardSet: [[DatabaseController sharedDatabaseController] loadLesson: [prefs mainLessonName]]];
+    PreferencesController *pref = [PreferencesController sharedPreferencesController];
+    NSString *name = [pref mainLessonName];
+    NSLog (@"loading lesson %@", name);
+    [self setCardSet: [[DatabaseController sharedDatabaseController] loadLesson: name]];
 }
 
 - (IBAction) settings: (id) sender
 {
-    NSLog(@"settings");
+    [self loadPreferencesViewController];
+    [self presentModalViewController: preferencesViewController animated: TRUE];
 }
 
 - (void) disableAllButtons
@@ -60,10 +70,13 @@
 
 - (IBAction) update: (id) sender
 {
+    PreferencesController *pref = [PreferencesController sharedPreferencesController];
     NSArray *changed = [cardSet changedCards];
     NSMutableString *string = [NSMutableString string];
     NSEnumerator *enumerator;
     Card *card;
+
+    NSLog(@"version is %d", [pref versionOfLesson: [pref mainLessonName]]);
 
     [self disableAllButtons];
     
@@ -75,7 +88,7 @@
     
     NSLog(@"update: %@", string);
     [[ConnectionController sharedConnectionController]
-     updateLesson: [[PreferencesController sharedPreferencesController] mainLessonName]
+     updateLesson: [pref mainLessonName]
      withStringData: string
      andNotify: self];
 }
@@ -102,6 +115,7 @@
 
 - (void) updateStats
 {
+    NSLog (@"%d cards in set", [cardSet numTotalCards]);
     [totalLabel setText: [NSString stringWithFormat: @"%d", [cardSet numTotalCards]]];
     [expiredLabel setText: [NSString stringWithFormat: @"%d", [cardSet numExpiredCards]]];
     [learnedLabel setText: [NSString stringWithFormat: @"%d", [cardSet numLearnedCards]]];
@@ -121,12 +135,12 @@
  */
 - (void) updateWithXMLParserDelegate: (XMLParserDelegate*) delegate
 {
-    PreferencesController *prefs = [PreferencesController sharedPreferencesController];
+    PreferencesController *pref = [PreferencesController sharedPreferencesController];
 
     [cardSet updateWithDeletedCardSet: [delegate deletedCardSet]
 			      cardSet: [delegate cardSet]];
     [cardSet save];
-    [prefs setVersion: [[delegate cardSet] version] ofLesson: [prefs mainLessonName]];
+    [pref setVersion: [[delegate cardSet] version] ofLesson: [pref mainLessonName]];
     [self updateStats];
 }
 
@@ -137,7 +151,8 @@
 - (void) updateFinishedWithData: (NSData*) updateData
 {
     NSArray *changed = [cardSet changedCards];
-    NSString *lesson = [[PreferencesController sharedPreferencesController] mainLessonName];
+    PreferencesController *pref = [PreferencesController sharedPreferencesController];
+    NSString *lesson = [pref mainLessonName];
     NSEnumerator *enumerator;
     Card *card;
     
@@ -149,7 +164,7 @@
 
     [[ConnectionController sharedConnectionController]
 	startDownloadLesson: lesson
-		fromVersion: [[PreferencesController sharedPreferencesController] versionOfLesson: lesson]
+		fromVersion: [pref versionOfLesson: lesson]
 		  andNotify: self];
 }
 

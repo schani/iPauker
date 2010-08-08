@@ -3,6 +3,7 @@
 #import "CardSet.h"
 #import "ConnectionController.h"
 #import "iPaukerLearnViewController.h"
+#import "iPaukerPreferencesViewController.h"
 
 @interface iPaukerViewController : UIViewController <DownloadClient, UpdateClient>
 {
@@ -15,6 +16,7 @@
     IBOutlet UIBarButtonItem *updateButton;
     CardSet *cardSet;
     iPaukerLearnViewController *learnViewController;
+    iPaukerPreferencesViewController *preferencesViewController;
 }
 
 - (IBAction)settings:(id)sender;

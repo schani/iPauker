@@ -14,6 +14,8 @@
 		28D7ACF80DDB3853001CB0EB /* iPaukerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* iPaukerViewController.m */; };
 		8E0446780E53172E004F9047 /* Card.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E0446770E53172E004F9047 /* Card.m */; };
 		8E04468D0E533816004F9047 /* CardSide.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E04468C0E533816004F9047 /* CardSide.m */; };
+		8E1A8368120F42E2002D2C2F /* iPaukerPreferencesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E1A8367120F42E2002D2C2F /* iPaukerPreferencesView.xib */; };
+		8E1A836D120F4F44002D2C2F /* iPaukerPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1A836C120F4F44002D2C2F /* iPaukerPreferencesViewController.m */; };
 		8E2740730E539559008A1AD6 /* CardProcessing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2740720E539559008A1AD6 /* CardProcessing.m */; };
 		8E2740760E539693008A1AD6 /* RepeatProcessing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2740750E539693008A1AD6 /* RepeatProcessing.m */; };
 		8E2741660E53A72B008A1AD6 /* LearnProcessing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2741650E53A72B008A1AD6 /* LearnProcessing.m */; };
@@ -45,6 +47,9 @@
 		8E0446770E53172E004F9047 /* Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Card.m; sourceTree = "<group>"; };
 		8E04468B0E533816004F9047 /* CardSide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardSide.h; sourceTree = "<group>"; };
 		8E04468C0E533816004F9047 /* CardSide.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardSide.m; sourceTree = "<group>"; };
+		8E1A8367120F42E2002D2C2F /* iPaukerPreferencesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = iPaukerPreferencesView.xib; sourceTree = "<group>"; };
+		8E1A836B120F4F44002D2C2F /* iPaukerPreferencesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPaukerPreferencesViewController.h; sourceTree = "<group>"; };
+		8E1A836C120F4F44002D2C2F /* iPaukerPreferencesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iPaukerPreferencesViewController.m; sourceTree = "<group>"; };
 		8E2740710E539559008A1AD6 /* CardProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardProcessing.h; sourceTree = "<group>"; };
 		8E2740720E539559008A1AD6 /* CardProcessing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardProcessing.m; sourceTree = "<group>"; };
 		8E2740740E539693008A1AD6 /* RepeatProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatProcessing.h; sourceTree = "<group>"; };
@@ -88,6 +93,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8E1A836B120F4F44002D2C2F /* iPaukerPreferencesViewController.h */,
+				8E1A836C120F4F44002D2C2F /* iPaukerPreferencesViewController.m */,
 				1D3623240D0F684500981E51 /* iPaukerAppDelegate.h */,
 				1D3623250D0F684500981E51 /* iPaukerAppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* iPaukerViewController.h */,
@@ -156,6 +163,7 @@
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				8EA2C0A80E524BA000928C39 /* iPaukerLearnViewController.xib */,
+				8E1A8367120F42E2002D2C2F /* iPaukerPreferencesView.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -215,6 +223,7 @@
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* iPaukerViewController.xib in Resources */,
 				8EA2C0A90E524BA000928C39 /* iPaukerLearnViewController.xib in Resources */,
+				8E1A8368120F42E2002D2C2F /* iPaukerPreferencesView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +249,7 @@
 				8EC3A3190EAB9FD300EB02B2 /* NSStringAdditions.m in Sources */,
 				8EC3A3C60EABDAA300EB02B2 /* DatabaseController.m in Sources */,
 				8EC3A3D00EABE5DB00EB02B2 /* PreferencesController.m in Sources */,
+				8E1A836D120F4F44002D2C2F /* iPaukerPreferencesViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

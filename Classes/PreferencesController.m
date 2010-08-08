@@ -40,9 +40,17 @@
     return self;
 }
 
+- (NSMutableDictionary*) dict
+{
+    if (!dict)
+	dict = [[NSMutableDictionary dictionary] retain];
+
+    return dict;
+}
+
 - (void) writeData
 {
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList: dict
+    NSData *data = [NSPropertyListSerialization dataFromPropertyList: [self dict]
 							      format: NSPropertyListXMLFormat_v1_0
 						    errorDescription: NULL];
 
@@ -50,26 +58,6 @@
 	[data writeToFile: fileName atomically: YES];
     else
 	NSLog(@"Could not write preferences to %@", fileName);
-}
-
-- (NSString*) userName
-{
-    return @"mark.probst@gmail.com";
-}
-
-- (NSString*) password
-{
-    return @"w1dmmkgi";
-}
-
-- (NSString*) mainLessonName
-{
-    return @"bla";
-}
-
-- (int) versionOfLesson: (NSString*) lesson
-{
-    return [[[[dict valueForKey: @"lessons"] valueForKey: lesson] valueForKey: @"version"] integerValue];
 }
 
 static NSMutableDictionary*
@@ -82,18 +70,50 @@ force_dict (NSMutableDictionary *dict, NSString *key)
 	d = [NSMutableDictionary dictionary];
 	[dict setValue: d forKey: key];
     }
-    
+
     return d;
+}
+
+- (NSString*) userName
+{
+    return [[self dict] valueForKey: @"userName"];
+}
+
+- (void) setUserName: (NSString*) name
+{
+    [[self dict] setValue: name forKey: @"userName"];
+}
+
+- (NSString*) password
+{
+    return [[self dict] valueForKey: @"password"];
+}
+
+- (void) setPassword: (NSString*) passwd
+{
+    [[self dict] setValue: passwd forKey: @"password"];
+}
+
+- (NSString*) mainLessonName
+{
+    return [[self dict] valueForKey: @"mainLessonName"];
+}
+
+- (void) setMainLessonName: (NSString*) name
+{
+    [[self dict] setValue: name forKey: @"mainLessonName"];
+}
+
+- (int) versionOfLesson: (NSString*) lesson
+{
+    return [[[[[self dict] valueForKey: @"lessons"] valueForKey: lesson] valueForKey: @"version"] integerValue];
 }
 
 - (void) setVersion: (int) version ofLesson: (NSString*) lesson
 {
     NSMutableDictionary *d;
-    
-    if (!dict)
-	dict = [[NSMutableDictionary dictionary] retain];
 
-    d = force_dict(dict, @"lessons");
+    d = force_dict([self dict], @"lessons");
     d = force_dict(d, lesson);
 
     [d setValue: [NSNumber numberWithInt: version] forKey: @"version"];
