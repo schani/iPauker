@@ -24,6 +24,7 @@
 
 @interface ConnectionController : NSObject {
     int state;
+    NSString *auth;
     NSMutableData *downloadData;
     id client;
     
