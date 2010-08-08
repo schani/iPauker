@@ -8,6 +8,7 @@
 
 #import "NSStringAdditions.h"
 #import "XMLParserDelegate.h"
+#import "PreferencesController.h"
 
 #import "ConnectionController.h"
 
@@ -18,8 +19,6 @@
 #define EMAIL	"test@example.com"
 #else
 #define URLBASE "http://ipauker.appspot.com"
-#define EMAIL	"mark.probst@gmail.com"
-#define PASSWD	"XXXsecretXXX"
 #endif
 
 enum {
@@ -99,6 +98,8 @@ static ConnectionController *connectionController;
 
 - (void) clientLogin
 {
+    PreferencesController *pref = [PreferencesController sharedPreferencesController];
+
     if (state == StateLoggedIn)
 	return;
 
@@ -112,7 +113,8 @@ static ConnectionController *connectionController;
     downloadData = [[NSMutableData data] retain];
 
     [[self makeConnectionForURL: [NSURL URLWithString: @"https://www.google.com/accounts/ClientLogin"]
-		 withStringData: [NSString stringWithFormat: @"Email=%s&Passwd=%s&accountType=GOOGLE&service=ah&source=iPauker", EMAIL, PASSWD]]
+		 withStringData: [NSString stringWithFormat: @"Email=%@&Passwd=%@&accountType=GOOGLE&service=ah&source=iPauker",
+					   [pref userName], [pref password]]]
 	retain];
     state = StateClientLogin;
 #endif

@@ -16,6 +16,8 @@
 
 + (PreferencesController*) sharedPreferencesController;
 
+- (NSString*) userName;
+- (NSString*) password;
 - (NSString*) mainLessonName;
 
 - (int) versionOfLesson: (NSString*) lesson;

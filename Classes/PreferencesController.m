@@ -52,6 +52,16 @@
 	NSLog(@"Could not write preferences to %@", fileName);
 }
 
+- (NSString*) userName
+{
+    return @"mark.probst@gmail.com";
+}
+
+- (NSString*) password
+{
+    return @"w1dmmkgi";
+}
+
 - (NSString*) mainLessonName
 {
     return @"bla";
