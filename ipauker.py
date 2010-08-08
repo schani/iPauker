@@ -274,14 +274,12 @@ class DiffRequestHandler(LessonRequestHandler):
 
         diff_cards = make_diff(lesson.version, current_cards, new_cards, self.is_full_list())
 
-        self.response.out.write('<html><body><pre>')
-        for card in diff_cards:
-            self.response.out.write('%s    %s    %d   %s\n' % (card.front_text, card.reverse_text,
-                                                               card.version, card.deleted))
-        self.response.out.write('</pre></body></html>')
-
         db.put(lesson)
-        db.put(diff_cards)
+        while len (diff_cards) > 0:
+            db.put (diff_cards [:500])
+            diff_cards = diff_cards [500:]
+
+        self.response.out.write ('<html><body>OK</body></html>')
 
     def post_no_lesson(self):
         self.response.out.write("""
