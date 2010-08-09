@@ -1,5 +1,4 @@
 import cgi
-import xml.parsers.expat
 import urllib
 from xml.sax import saxutils
 
@@ -7,6 +6,8 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext.webapp.util import run_wsgi_app
+
+import parsers
 
 class Lesson(db.Model):
     name = db.StringProperty(required=True, multiline=True)
@@ -62,133 +63,6 @@ class MainPage(webapp.RequestHandler):
             </html>""")
         else:
             self.redirect(users.create_login_url(self.request.uri))
-
-TOP_LEVEL = 0
-IN_BATCH = 1
-IN_CARD = 2
-IN_SIDE = 3
-IN_TEXT = 4
-
-class ParserBase:
-    def __init__(self, lesson):
-        self.state = TOP_LEVEL
-        self.cards = []
-        self.front_batch = None
-        self.front_text = None
-        self.front_timestamp = None
-        self.reverse_text = None
-        self.reverse_batch = None
-        self.reverse_timestamp = None
-        self.text = None
-        self.lesson = lesson
-
-    def append_card(self):
-        self.cards.append(Card(lesson = self.lesson,
-                               version = self.lesson.version,
-                               deleted = False,
-                               front_text = db.Text(self.front_text),
-                               front_batch = self.front_batch,
-                               front_timestamp = self.front_timestamp,
-                               reverse_text = db.Text(self.reverse_text),
-                               reverse_batch = self.reverse_batch,
-                               reverse_timestamp = self.reverse_timestamp))
-
-    def parse(self, data):
-        p = xml.parsers.expat.ParserCreate()
-        p.StartElementHandler = self.start_element
-        p.EndElementHandler = self.end_element
-        p.CharacterDataHandler = self.char_data
-
-        p.Parse(data, 1);
-
-        return self.cards
-
-class PaukerParser(ParserBase):
-    def __init__(self, lesson):
-        ParserBase.__init__(self, lesson)
-        self.front_batch = -2
-
-    def start_element(self, name, attrs):
-        if self.state == TOP_LEVEL and name == 'Batch':
-            self.state = IN_BATCH
-        elif self.state == IN_BATCH and name == 'Card':
-            self.state = IN_CARD
-        elif self.state == IN_CARD and name == 'FrontSide':
-            if attrs.has_key('LearnedTimestamp'):
-                self.front_timestamp = int(attrs['LearnedTimestamp']);
-            else:
-                self.front_timestamp = None
-            self.text = ''
-            self.state = IN_SIDE
-        elif self.state == IN_CARD and name == 'ReverseSide':
-            if attrs.has_key('Batch'):
-                self.reverse_batch = int(attrs['Batch'])
-            else:
-                self.reverse_batch = -2
-            if attrs.has_key('LearnedTimestamp'):
-                self.reverse_timestamp = int(attrs['LearnedTimestamp']);
-            else:
-                self.reverse_timestamp = None
-            self.text = ''
-            self.state = IN_SIDE
-        elif self.state == IN_SIDE and name == 'Text':
-            self.state = IN_TEXT
-
-    def end_element(self, name):
-        if self.state == IN_BATCH and name == 'Batch':
-            self.front_batch = self.front_batch + 1
-            self.state = TOP_LEVEL
-        elif self.state == IN_CARD and name == 'Card':
-            self.append_card()
-            self.state = IN_BATCH
-        elif self.state == IN_SIDE and name == 'FrontSide':
-            self.front_text = self.text
-            self.state = IN_CARD
-        elif self.state == IN_SIDE and name == 'ReverseSide':
-            self.reverse_text = self.text
-            self.state = IN_CARD
-        elif self.state == IN_TEXT and name == 'Text':
-            self.state = IN_SIDE
-
-    def char_data(self, data):
-        if self.state == IN_TEXT:
-            self.text = self.text + data
-
-class CardsParser(ParserBase):
-    def start_element(self, name, attrs):
-        if self.state == TOP_LEVEL and name == 'card':
-            self.state = IN_CARD
-        elif self.state == IN_CARD and name == 'front':
-            self.front_batch = int(attrs['batch'])
-            if not attrs.has_key('timestamp') or attrs['timestamp'] == 'None':
-                self.front_timestamp = None
-            else:
-                self.front_timestamp = int(attrs['timestamp'])
-            self.text = ''
-            self.state = IN_SIDE
-        elif self.state == IN_CARD and name == 'reverse':
-            self.reverse_batch = int(attrs['batch'])
-            if not attrs.has_key('timestamp') or attrs['timestamp'] == 'None':
-                self.reverse_timestamp = None
-            else:
-                self.reverse_timestamp = int(attrs['timestamp'])
-            self.text = ''
-            self.state = IN_SIDE
-
-    def end_element(self, name):
-        if self.state == IN_CARD and name == 'card':
-            self.append_card()
-            self.state = TOP_LEVEL
-        elif self.state == IN_SIDE and name == 'front':
-            self.front_text = self.text
-            self.state = IN_CARD
-        elif self.state == IN_SIDE and name == 'reverse':
-            self.reverse_text = self.text
-            self.state = IN_CARD
-
-    def char_data(self, data):
-        if self.state == IN_SIDE:
-            self.text = self.text + data
 
 def get_lesson(user, lesson_name, create):
     lessons = Lesson.gql("WHERE name = :name AND owner = :owner", name=lesson_name, owner=user).fetch(1)
@@ -295,7 +169,7 @@ class DiffRequestHandler(LessonRequestHandler):
 
 class Upload(DiffRequestHandler):
     def parse_diff_data(self, lesson, data):
-        p = PaukerParser(lesson)
+        p = parsers.PaukerParser(Card, db.Text, lesson)
         return p.parse(data)
 
     def is_full_list(self):
@@ -303,7 +177,7 @@ class Upload(DiffRequestHandler):
 
 class Update(DiffRequestHandler):
     def parse_diff_data(self, lesson, data):
-        p = CardsParser(lesson)
+        p = parsers.CardsParser(Card, db.Text, lesson)
         return p.parse(data)
 
     def is_full_list(self):
