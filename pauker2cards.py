@@ -24,6 +24,9 @@ class Card:
         self.reverse_batch = reverse_batch
         self.reverse_timestamp = reverse_timestamp
 
+    def hash_key(self):
+        return (self.front_text, self.reverse_text)
+
 def ident (x):
     return x
 
@@ -47,6 +50,12 @@ def main ():
     lesson = Lesson ("dummy", None, 0)
     parser = parsers.PaukerParser (Card, ident, lesson)
     cards = parser.parse (pauker_data)
+
+    cards_set = set ()
+    for card in cards:
+        cards_set.add (card.hash_key ())
+
+    print "Read %d cards - %d unique" % (len (cards), len (cards_set))
 
     if partition:
         i = 0
