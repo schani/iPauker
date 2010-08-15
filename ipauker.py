@@ -8,6 +8,7 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 import parsers
+import writers
 
 class Lesson(db.Model):
     name = db.StringProperty(required=True, multiline=True)
@@ -191,24 +192,9 @@ class List(LessonRequestHandler):
         if lesson:
             cards = Card.gql("WHERE lesson = :lesson AND version > :version",
                              lesson=lesson, version=diff_version)
-            self.response.out.write('<cards format="0.1" version="%s">\n' % lesson.version)
-            for card in cards:
-                if card.deleted:
-                    self.response.out.write('<card deleted="True"><front>%s</front><reverse>%s</reverse></card>\n' % \
-                                            (saxutils.escape(card.front_text),
-                                             saxutils.escape(card.reverse_text)))
-                else:
-                    self.response.out.write('<card>\n')
-                    self.response.out.write('<front batch="%s" timestamp="%s">%s</front>\n' % \
-                                            (card.front_batch, card.front_timestamp,
-                                             saxutils.escape(card.front_text)))
-                    self.response.out.write('<reverse batch="%s" timestamp="%s">%s</reverse>\n' % \
-                                            (card.reverse_batch, card.reverse_timestamp,
-                                             saxutils.escape(card.reverse_text)))
-                    self.response.out.write('</card>\n')
-            self.response.out.write('</cards>\n')
+            writers.write_cards (lesson, cards, self.response.out.write)
         else:
-            self.response.out.write('<cards format="0.1"></cards>\n')
+            writers.write_cards (None, None, self.response.out.write)
 
     def post_no_lesson(self):
         self.response.out.write("""
