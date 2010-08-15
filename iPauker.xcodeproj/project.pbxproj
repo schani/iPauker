@@ -100,12 +100,12 @@
 				28D7ACF60DDB3853001CB0EB /* iPaukerViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* iPaukerViewController.m */,
 				8EA2C0A50E524B7C00928C39 /* iPaukerLearnViewController.h */,
+				8E0446760E53172E004F9047 /* Card.h */,
 				8EA2C0A60E524B7C00928C39 /* iPaukerLearnViewController.m */,
 				8EA2C05B0E52449100928C39 /* CardSet.h */,
 				8EA2C05C0E52449100928C39 /* CardSet.m */,
 				8E04468B0E533816004F9047 /* CardSide.h */,
 				8E04468C0E533816004F9047 /* CardSide.m */,
-				8E0446760E53172E004F9047 /* Card.h */,
 				8E0446770E53172E004F9047 /* Card.m */,
 				8E2740710E539559008A1AD6 /* CardProcessing.h */,
 				8E2740720E539559008A1AD6 /* CardProcessing.m */,
@@ -292,7 +292,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = iphonesimulator3.1.3;
+				SDKROOT = iphonesimulator4.0;
 			};
 			name = Debug;
 		};
@@ -305,7 +305,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = iphoneos3.1.3;
+				SDKROOT = iphoneos4.0;
 			};
 			name = Release;
 		};
