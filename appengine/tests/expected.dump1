@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <!--This is a lesson file for Pauker (http://pauker.sourceforge.net)-->
+        <Lesson LessonFormat="1.7">
+        <Description>bla version 1 by test@example.com</Description><Batch>
+
+                <Card>
+                <FrontSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>Anfertigung</Text>
+                </FrontSide>
+                <ReverseSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>la confección</Text>
+                </ReverseSide>
+                </Card>
+                <Card>
+                <FrontSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>betreuen, bedienen</Text>
+                </FrontSide>
+                <ReverseSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>atender (a)</Text>
+                </ReverseSide>
+                </Card>
+                <Card>
+                <FrontSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>Alles Gute! (Sie-Form)</Text>
+                </FrontSide>
+                <ReverseSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>¡Que usted lo pase bien!</Text>
+                </ReverseSide>
+                </Card></Batch>
+<Batch/>
+<Batch/>
+<Batch/>
+<Batch>
+
+                <Card>
+                <FrontSide LearnedTimestamp="100" Orientation="LTR" RepeatByTyping="false">
+                <Text>Baumwolle</Text>
+                </FrontSide>
+                <ReverseSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>el algodón</Text>
+                </ReverseSide>
+                </Card>
+                <Card>
+                <FrontSide LearnedTimestamp="101" Orientation="LTR" RepeatByTyping="false">
+                <Text>Kosten</Text>
+                </FrontSide>
+                <ReverseSide  Orientation="LTR" RepeatByTyping="false">
+                <Text>el costo</Text>
+                </ReverseSide>
+                </Card></Batch>
+<Batch>
+
+                <Card>
+                <FrontSide LearnedTimestamp="103" Orientation="LTR" RepeatByTyping="false">
+                <Text>die Pannenhilfe</Text>
+                </FrontSide>
+                <ReverseSide Batch="4" LearnedTimestamp="104" Orientation="LTR" RepeatByTyping="false">
+                <Text>la Ayuda (en) carretera</Text>
+                </ReverseSide>
+                </Card>
+                <Card>
+                <FrontSide LearnedTimestamp="105" Orientation="LTR" RepeatByTyping="false">
+                <Text>Psychologe</Text>
+                </FrontSide>
+                <ReverseSide Batch="4" LearnedTimestamp="106" Orientation="LTR" RepeatByTyping="false">
+                <Text>psicólogo</Text>
+                </ReverseSide>
+                </Card></Batch>
+</Lesson>

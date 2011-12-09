@@ -1,0 +1,15 @@
+<cards format="0.1" version="2">
+<card deleted="True"><front>Anfertigung</front><reverse>la confección</reverse></card>
+<card>
+<front batch="2" timestamp="200">Alles Gute! (Sie-Form)</front>
+<reverse batch="-2" timestamp="None">¡Que usted lo pase bien!</reverse>
+</card>
+<card>
+<front batch="-2" timestamp="100">Baumwolle</front>
+<reverse batch="1" timestamp="201">el algodón</reverse>
+</card>
+<card>
+<front batch="4" timestamp="202">die Pannenhilfe</front>
+<reverse batch="4" timestamp="104">la Ayuda (en) carretera</reverse>
+</card>
+</cards>

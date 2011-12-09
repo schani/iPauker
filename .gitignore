@@ -2,3 +2,7 @@
 iPauker.xcodeproj/schani.*
 build
 *.xcuserdatad
+appengine/tests/out.*
+appengine/tests/cookies.txt
+appengine/index.yaml
+appengine/*.pyc
