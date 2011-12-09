@@ -277,7 +277,7 @@ static ConnectionController *connectionController;
 {
     NSLog(@"Connection failed! Error - %@ %@",
 	  [error localizedDescription],
-	  [[error userInfo] objectForKey: NSErrorFailingURLStringKey]);
+	  [[error userInfo] objectForKey: NSURLErrorFailingURLStringErrorKey]);
 
     if (state == StateLogin || state == StateList)
 	[client downloadFailed];

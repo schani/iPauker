@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "CardSet.h"
 
-@interface XMLParserDelegate : NSObject {
+@interface XMLParserDelegate : NSObject <NSXMLParserDelegate> {
     CardSet *cardSet;
     CardSet *deletedCardSet;
     int state;
