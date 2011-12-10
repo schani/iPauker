@@ -1,16 +1,16 @@
 <cards format="0.1" version="2">
-<card deleted="True"><front>Anfertigung</front><reverse>la confección</reverse></card>
+<card deleted="True"><front>Anfertigung</front><reverse>la confeccion</reverse></card>
 <card>
 <front batch="-2" timestamp="None">betreuen, bedienen</front>
 <reverse batch="-2" timestamp="None">atender (a)</reverse>
 </card>
 <card>
 <front batch="2" timestamp="200">Alles Gute! (Sie-Form)</front>
-<reverse batch="-2" timestamp="None">¡Que usted lo pase bien!</reverse>
+<reverse batch="-2" timestamp="None">Que usted lo pase bien!</reverse>
 </card>
 <card>
 <front batch="-2" timestamp="100">Baumwolle</front>
-<reverse batch="1" timestamp="201">el algodón</reverse>
+<reverse batch="1" timestamp="201">el algodon</reverse>
 </card>
 <card>
 <front batch="2" timestamp="101">Kosten</front>
@@ -22,6 +22,6 @@
 </card>
 <card>
 <front batch="3" timestamp="105">Psychologe</front>
-<reverse batch="4" timestamp="106">psicólogo</reverse>
+<reverse batch="4" timestamp="106">psicologo</reverse>
 </card>
 </cards>

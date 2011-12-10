@@ -16,7 +16,7 @@
                 <Text>Baumwolle</Text>
                 </FrontSide>
                 <ReverseSide Batch="1" LearnedTimestamp="201" Orientation="LTR" RepeatByTyping="false">
-                <Text>el algodón</Text>
+                <Text>el algodon</Text>
                 </ReverseSide>
                 </Card></Batch>
 <Batch/>
@@ -29,7 +29,7 @@
                 <Text>Alles Gute! (Sie-Form)</Text>
                 </FrontSide>
                 <ReverseSide  Orientation="LTR" RepeatByTyping="false">
-                <Text>¡Que usted lo pase bien!</Text>
+                <Text>Que usted lo pase bien!</Text>
                 </ReverseSide>
                 </Card>
                 <Card>
@@ -47,7 +47,7 @@
                 <Text>Psychologe</Text>
                 </FrontSide>
                 <ReverseSide Batch="4" LearnedTimestamp="106" Orientation="LTR" RepeatByTyping="false">
-                <Text>psicólogo</Text>
+                <Text>psicologo</Text>
                 </ReverseSide>
                 </Card></Batch>
 <Batch>
