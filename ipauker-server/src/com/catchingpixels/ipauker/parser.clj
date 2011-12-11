@@ -10,6 +10,11 @@
     (java.lang.Integer. s)
     default))
 
+(defn- xml-int-opt [s]
+  (if (= s "None")
+    nil
+    (xml-int s nil)))
+
 (defn- parse-pauker-side [side batch]
   {:text (first (:content (subtag side :Text)))
    :timestamp (xml-int (:LearnedTimestamp (:attrs side)) nil)
@@ -30,3 +35,18 @@
 					   :reverse (parse-pauker-side (subtag card :ReverseSide) nil)})
 					cards)))
 			       batches))))
+
+(defn- parse-card-side [side]
+  {:batch (xml-int (:batch (:attrs side)) nil)
+   :timestamp (xml-int-opt (:timestamp (:attrs side)))
+   :text (first (:content side))})
+
+(defn parse-cards [lesson input]
+  (let [xml (xml/parse input)]
+    (map (fn [card]
+	   {:lesson (:id lesson)
+	    :version (:version lesson)
+	    :deleted false
+	    :front (parse-card-side (subtag card :front))
+	    :reverse (parse-card-side (subtag card :reverse))})
+	 (:content xml))))

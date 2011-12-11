@@ -49,8 +49,18 @@
        (delete-lesson lesson))))
   (do-version-tests 0)
   (loop [v 1]
-    (let [upload-file (java.io.File. test-dir (str "upload." v ".xml"))]
-      (when (.exists upload-file)
-	(process-pauker-upload test-user test-lesson-name upload-file)
-	(do-version-tests v)
-	(recur (inc v))))))
+    (let [upload-file (java.io.File. test-dir (str "upload." v ".xml"))
+	  update-file (java.io.File. test-dir (str "update." v ".xml"))]
+      (cond
+       (.exists upload-file)
+       (do
+	 (print "upload " v "\n")
+	 (process-pauker-upload test-user test-lesson-name upload-file)
+	 (do-version-tests v)
+	 (recur (inc v)))
+       (.exists update-file)
+       (do
+	 (print "update " v "\n")
+	 (process-cards-update test-user test-lesson-name update-file)
+	 (do-version-tests v)
+	 (recur (inc v)))))))
