@@ -55,12 +55,14 @@
        (.exists upload-file)
        (do
 	 (print "upload " v "\n")
-	 (process-pauker-upload test-user test-lesson-name upload-file)
+	 (let [lesson (get-or-create-lesson test-user test-lesson-name)]
+	   (process-pauker-upload lesson upload-file))
 	 (do-version-tests v)
 	 (recur (inc v)))
        (.exists update-file)
        (do
 	 (print "update " v "\n")
-	 (process-cards-update test-user test-lesson-name update-file)
+	 (let [lesson (get-lesson test-user test-lesson-name true)]
+	   (process-cards-update lesson update-file))
 	 (do-version-tests v)
 	 (recur (inc v)))))))
