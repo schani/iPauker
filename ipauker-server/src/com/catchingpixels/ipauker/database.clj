@@ -40,10 +40,10 @@
 		      [:deleted "boolean"]
 		      [:front_text "varchar"]
 		      [:front_batch "integer"]
-		      [:front_timestamp "integer"]
+		      [:front_timestamp "bigint"]
 		      [:reverse_text "varchar"]
 		      [:reverse_batch "integer"]
-		      [:reverse_timestamp "integer"])))
+		      [:reverse_timestamp "bigint"])))
 
 (defn- create-lesson [owner name]
   (transaction

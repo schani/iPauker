@@ -10,14 +10,19 @@
     (java.lang.Integer. s)
     default))
 
-(defn- xml-int-opt [s]
+(defn- xml-long [s default]
+  (if s
+    (java.lang.Long. s)
+    default))
+
+(defn- xml-long-opt [s]
   (if (= s "None")
     nil
-    (xml-int s nil)))
+    (xml-long s nil)))
 
 (defn- parse-pauker-side [side batch]
   {:text (first (:content (subtag side :Text)))
-   :timestamp (xml-int (:LearnedTimestamp (:attrs side)) nil)
+   :timestamp (xml-long (:LearnedTimestamp (:attrs side)) nil)
    :batch (or batch
 	      (xml-int (:Batch (:attrs side)) -2))})
 
@@ -38,7 +43,7 @@
 
 (defn- parse-card-side [side]
   {:batch (xml-int (:batch (:attrs side)) nil)
-   :timestamp (xml-int-opt (:timestamp (:attrs side)))
+   :timestamp (xml-long-opt (:timestamp (:attrs side)))
    :text (first (:content side))})
 
 (defn parse-cards [lesson input]
