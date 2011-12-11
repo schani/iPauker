@@ -39,7 +39,7 @@
 	  [:table
 	   (map (fn [lesson]
 		  [:tr
-		   [:td (:name lesson)]
+		   [:td [:a {:href (str "/lesson/" (:id lesson))} (escape-html (:name lesson))]]
 		   [:td (str (:version lesson))]
 		   [:td [:a {:href (str "/upload/" (:id lesson))} "Upload"]]])
 		lessons)]
@@ -56,6 +56,18 @@
 	  [:input {:type "file" :name "xml"}]]
 	 [:input {:type "submit" :value "Submit"}]]))
 
+(defn- lesson-page [lesson-id]
+  (transaction
+   (let [lesson (get-lesson-by-id dummy-user lesson-id)
+	 cards (lesson-cards lesson false 0)]
+     (html [:h1 "Lesson " (escape-html (:name lesson))]
+	   [:table
+	    (map (fn [card]
+		   [:tr
+		    [:td (escape-html (:text (:front card)))]
+		    [:td (escape-html (:text (:reverse card)))]])
+		 cards)]))))
+
 (defroutes main-routes
   (GET "/" []
        (index-page))
@@ -63,6 +75,8 @@
        (upload-page nil))
   (GET "/upload/:id" [id]
        (upload-page (java.lang.Long. id)))
+  (GET "/lesson/:id" [id]
+       (lesson-page (java.lang.Long. id)))
   (wrap-multipart-params
    (POST "/upload" {{lesson-id :lesson-id
 		     lesson-name :lesson-name
