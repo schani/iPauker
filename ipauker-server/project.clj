@@ -1,8 +1,9 @@
 (defproject ipauker-server "0.0.1-SNAPSHOT"
   :description "iPauker Server"
   :dependencies [[org.clojure/clojure "1.2.1"]
-		 ;[compojure "1.0.0-SNAPSHOT"]
-		 ;[hiccup "0.3.7"]
+		 [compojure "1.0.0-SNAPSHOT"]
+		 [ring/ring-core "1.0.0-RC5"]
+		 [hiccup "0.3.6"]
 		 [commons-io "1.4"]
 		 [com.h2database/h2 "1.3.162"]
 		 [clojureql "1.1.0-SNAPSHOT"]]

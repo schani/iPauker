@@ -60,16 +60,26 @@
 	     (ql/where (= :id (:id lesson))))
    nil))
 
+(defn- lesson-from-result-set [rs fail-if-not-found]
+  (when (> (count rs) 1)
+    (throw (Exception. "Database inconsistent")))
+  (when (and fail-if-not-found (zero? (count rs)))
+    (throw (Exception. "Lesson not found")))
+  (first rs))
+
 (defn get-lesson [owner lesson-name fail-if-not-found]
   (transaction
    (ql/with-results [rs (ql/select (ql/table :lesson)
 				       (ql/where (and (= :owner owner)
 						      (= :name lesson-name))))]
-     (when (> (count rs) 1)
-       (throw (Exception. "Database inconsistent")))
-     (when (and fail-if-not-found (zero? (count rs)))
-       (throw (Exception. (str "No lesson " lesson-name " for owner " owner))))
-     (first rs))))
+     (lesson-from-result-set rs fail-if-not-found))))
+
+(defn get-lesson-by-id [owner id]
+  (transaction
+   (ql/with-results [rs (ql/select (ql/table :lesson)
+				   (ql/where (and (= :owner owner)
+						  (= :id id))))]
+     (lesson-from-result-set rs true))))
 
 (defn get-or-create-lesson [owner name]
   (transaction
@@ -79,6 +89,11 @@
        (do
 	 (create-lesson owner name)
 	 (get-lesson owner name true))))))
+
+(defn get-or-create-lesson-generic [owner id name]
+  (if id
+    (get-lesson-by-id owner id)
+    (get-or-create-lesson owner name)))
 
 (defn update-lesson [lesson]
   (transaction
