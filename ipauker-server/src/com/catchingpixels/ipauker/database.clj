@@ -1,11 +1,23 @@
 (ns com.catchingpixels.ipauker.database
+  (:use clojure.contrib.def)
   (:require [clojureql.core :as ql]
 	    [clojure.contrib.sql :as sql]))
+
+(defvar- prefix (java.io.File. (System/getProperty "user.home") "ipauker-server"))
+
+(defn- prefix-subdir [subdir-name]
+  (let [subdir (java.io.File. prefix subdir-name)]
+    (if (not (.exists subdir))
+      (let [result (.mkdirs subdir)]
+	(assert result)))
+    subdir))
+
+(defvar- database-dir (prefix-subdir "databases"))
 
 (def jdbc-settings
    {:classname "org.h2.Driver"
     :subprotocol "h2:file"
-    :subname "/tmp/demo"
+    :subname (.getAbsolutePath (java.io.File. database-dir "db"))
     :user "sa"
     :password ""})
 
