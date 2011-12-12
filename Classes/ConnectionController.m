@@ -18,14 +18,11 @@
 #define URLBASE	"http://0.0.0.0:3000/ipauker"
 #define EMAIL	"test@example.com"
 #else
-#define URLBASE "http://ipauker.appspot.com"
+#define URLBASE "http://www.catchingpixels.com/ipauker"
 #endif
 
 enum {
     StateInit,
-    StateClientLogin,
-    StateClientLoggedIn,
-    StateLogin,
     StateLoggedIn,
     StateList,
     StateUpdate
@@ -98,67 +95,14 @@ static ConnectionController *connectionController;
 
 - (void) clientLogin
 {
-    PreferencesController *pref = [PreferencesController sharedPreferencesController];
-
     if (state == StateLoggedIn)
-	return;
+        return;
 
     NSAssert(state == StateInit, @"Wrong state");
 
-#ifdef LOCAL_APPENGINE
     state = StateLoggedIn;
     [self processQueue];
-#else
-    NSAssert (downloadData == nil, @"Should be nil");
-    downloadData = [[NSMutableData data] retain];
-
-    [[self makeConnectionForURL: [NSURL URLWithString: @"https://www.google.com/accounts/ClientLogin"]
-		 withStringData: [NSString stringWithFormat: @"Email=%@&Passwd=%@&accountType=GOOGLE&service=ah&source=iPauker",
-					   [pref userName], [pref password]]]
-	retain];
-    state = StateClientLogin;
-#endif
 }
-
-#ifndef LOCAL_APPENGINE
-- (BOOL) extractAuthFromData: (NSData*) data
-{
-    NSString *string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
-    NSArray *lines = [string componentsSeparatedByCharactersInSet: [NSCharacterSet newlineCharacterSet]];
-
-    NSAssert (auth == nil, @"Should not have auth");
-
-    NSLog (@"extracting from %d bytes", [data length]);
-    if (!string)
-	NSLog (@"c string is %s", [data bytes]);
-
-    for (NSString *line in lines) {
-	NSArray *fields = [line componentsSeparatedByString: @"="];
-	NSLog (@"line is %@ - has %d fields", line, [fields count]);
-	if ([fields count] == 2 && [[fields objectAtIndex: 0] isEqualToString: @"Auth"]) {
-	    auth = [[fields objectAtIndex: 1] retain];
-	    return YES;
-	}
-    }
-    return NO;
-}
-
-- (void) login
-{
-    NSAssert(state == StateClientLoggedIn, @"Wrong state");
-
-#ifdef LOCAL_APPENGINE
-    [[self makeConnectionForPath: @"_ah/login"
-		  withStringData: [NSString stringWithFormat: @"email=%s&admin=False&action=Login", EMAIL]] retain];
-#else
-    NSAssert (auth, @"Must have auth to log in");
-    [[self makeConnectionForPath: [NSString stringWithFormat: @"_ah/login?auth=%@", auth]
-		  withStringData: nil] retain];
-#endif
-
-    state = StateLogin;
-}
-#endif
 
 - (void) processQueue
 {
@@ -186,10 +130,8 @@ static ConnectionController *connectionController;
 			  client: (id) qClient
 			   state: (int) qState
 {
-    if (state == StateLoggedIn)
-	NSAssert (queuedPath == nil, @"Have queued connection despite being logged in");
-    else
-	NSAssert (state == StateClientLogin || state == StateLogin, @"Queueing connection despite processing something else");
+    NSAssert (state == StateLoggedIn, @"Must be in logged in state");
+    NSAssert (queuedPath == nil, @"Have queued connection despite being logged in");
     
     queuedPath = [path retain];
     queuedStringData = [stringData retain];
@@ -242,27 +184,7 @@ static ConnectionController *connectionController;
     NSLog(@"Finished loading");
     [connection release];
 
-    if (state == StateClientLogin) {
-#ifdef LOCAL_APPENGINE
-	NSAssert (NO, @"Should not be in client login state");
-#else
-	BOOL result = [self extractAuthFromData: [downloadData autorelease]];
-	NSAssert (result, @"FIXME: Should handle error");
-	downloadData = nil;
-	state = StateClientLoggedIn;
-	[self login];
-#endif
-    } else if (state == StateLogin) {
-#ifdef LOCAL_APPENGINE
-        NSAssert (NO, @"Should not be in login state");
-#else
-	for (NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
-	    NSLog(@"cookie %@ - %@\n", [cookie name], [cookie value]);
-	}
-	state = StateLoggedIn;
-	[self processQueue];
-#endif
-    } else if (state == StateList) {
+    if (state == StateList) {
 	NSData *data = [downloadData autorelease];
 	id cl = [client autorelease];
 	client = nil;
@@ -285,12 +207,9 @@ static ConnectionController *connectionController;
 	  [error localizedDescription],
 	  [[error userInfo] objectForKey: NSURLErrorFailingURLStringErrorKey]);
 
-    if (state == StateLogin || state == StateList)
-	[client downloadFailed];
+    if (state == StateList)
+        [client downloadFailed];
     [connection release];
-    if (state == StateLogin)
-	state = StateInit;
-    else
 	state = StateLoggedIn;
     client = nil;
 }
