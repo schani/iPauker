@@ -7,7 +7,7 @@
   (:require [clojure.xml :as xml]
 	    [clojure.contrib.lazy-xml :as lxml]))
 
-(def test-dir (java.io.File. (str (System/getProperty "user.dir") "/../appengine/tests")))
+(def test-dir (java.io.File. (str (System/getProperty "user.dir") "/test-data")))
 
 (def test-user -1)
 (def test-lesson-name "bla")
