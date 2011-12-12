@@ -68,7 +68,8 @@
 		  [:tr
 		   [:td [:a {:href (str "/ipauker/lesson/" (:id lesson))} (escape-html (:name lesson))]]
 		   [:td (str (:version lesson))]
-		   [:td [:a {:href (str "/ipauker/upload/" (:id lesson))} "Upload"]]])
+		   [:td [:a {:href (str "/ipauker/upload/" (:id lesson))} "Upload"]]
+		   [:td [:a {:href (str "/ipauker/dump/" (:id lesson) ".xml.pau")} "Pauker Download"]]])
 		lessons)]
 	  [:p [:a {:href "/ipauker/upload"} "Upload new"]])))
 
@@ -95,6 +96,11 @@
 		    [:td (escape-html (:text (:reverse card)))]])
 		 cards)]))))
 
+(defn- pauker-dump [lesson-id]
+  (transaction
+   (let [lesson (get-lesson-by-id dummy-user lesson-id)]
+     (with-out-str (lxml/emit (xml-pauker-dump lesson))))))
+
 (defroutes main-routes
   (GET "/" []
        (response/redirect "/ipauker"))
@@ -107,6 +113,8 @@
        (upload-page (java.lang.Long. id)))
   (GET "/ipauker/lesson/:id" [id]
        (lesson-page (java.lang.Long. id)))
+  (GET "/ipauker/dump/:id.xml" [id]
+       (pauker-dump (java.lang.Long. id)))
   (wrap-multipart-params
    (POST "/ipauker/upload" {{lesson-id :lesson-id
 			     lesson-name :lesson-name
