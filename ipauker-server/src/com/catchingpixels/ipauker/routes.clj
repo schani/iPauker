@@ -2,6 +2,7 @@
   (:use compojure.core
 	clojure.contrib.logging
 	clojure.contrib.def
+	clojure.contrib.str-utils
 	hiccup.core
 	[hiccup.middleware :only (wrap-base-url)]
 	[ring.middleware.multipart-params :only (wrap-multipart-params)]
@@ -24,6 +25,18 @@
 	(catch Exception exc
 	  (warn "Exception caught in API request" exc)
 	  {:status 400})))))
+
+(defn- snip-slash
+  [s]
+  (if (and (> (.length s) 1)
+           (.endsWith s "/"))
+    (chop s)
+    s))
+
+(defn- wrap-remove-ending-slash [handler]
+  (fn [request]
+    (let [uri (snip-slash (:uri request))]
+      (handler (assoc request :uri uri)))))
 
 (defn- pauker-upload [lesson-id lesson-name xml-file]
   (try
@@ -85,8 +98,9 @@
 (defroutes main-routes
   (GET "/" []
        (response/redirect "/ipauker"))
-  (GET "/ipauker" []
-       (index-page))
+  (wrap-remove-ending-slash
+   (GET "/ipauker" []
+	(index-page)))
   (GET "/ipauker/upload" []
        (upload-page nil))
   (GET "/ipauker/upload/:id" [id]
