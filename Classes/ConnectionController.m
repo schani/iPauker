@@ -15,7 +15,7 @@
 //#define LOCAL_APPENGINE
 
 #ifdef LOCAL_APPENGINE
-#define URLBASE	"http://128.0.0.1:8080"
+#define URLBASE	"http://0.0.0.0:3000/ipauker"
 #define EMAIL	"test@example.com"
 #else
 #define URLBASE "http://ipauker.appspot.com"
@@ -106,8 +106,8 @@ static ConnectionController *connectionController;
     NSAssert(state == StateInit, @"Wrong state");
 
 #ifdef LOCAL_APPENGINE
-    state = StateClientLoggedIn;
-    [self login];
+    state = StateLoggedIn;
+    [self processQueue];
 #else
     NSAssert (downloadData == nil, @"Should be nil");
     downloadData = [[NSMutableData data] retain];
@@ -120,6 +120,7 @@ static ConnectionController *connectionController;
 #endif
 }
 
+#ifndef LOCAL_APPENGINE
 - (BOOL) extractAuthFromData: (NSData*) data
 {
     NSString *string = [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
@@ -157,6 +158,7 @@ static ConnectionController *connectionController;
 
     state = StateLogin;
 }
+#endif
 
 - (void) processQueue
 {
@@ -251,11 +253,15 @@ static ConnectionController *connectionController;
 	[self login];
 #endif
     } else if (state == StateLogin) {
+#ifdef LOCAL_APPENGINE
+        NSAssert (NO, @"Should not be in login state");
+#else
 	for (NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
 	    NSLog(@"cookie %@ - %@\n", [cookie name], [cookie value]);
 	}
 	state = StateLoggedIn;
 	[self processQueue];
+#endif
     } else if (state == StateList) {
 	NSData *data = [downloadData autorelease];
 	id cl = [client autorelease];
