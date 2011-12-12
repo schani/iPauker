@@ -1,3 +1,6 @@
-* TODO Save data when app is interrupted
-* TODO Do something about the proximity of "Incorrect" and "Cancel"
+* General
+** TODO Save data when app is interrupted
+** TODO Do something about the proximity of "Incorrect" and "Cancel"
 If they stay this close together, at least ask before cancelling.
+* Server
+** TODO Use a separate DB for the test suite
