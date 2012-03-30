@@ -1,4 +1,5 @@
 * General
+** TODO Synchronize with Pauker via Dropbox
 ** TODO Save data when app is interrupted
 ** TODO Do something about the proximity of "Incorrect" and "Cancel"
 If they stay this close together, at least ask before cancelling.
