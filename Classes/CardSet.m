@@ -249,17 +249,38 @@
 {
     DatabaseController *db = [DatabaseController sharedDatabaseController];
 
+    NSDate *date = [NSDate date];
     NSLog (@"inserting %d cards", [addedCards count]);
     [db insertCards: addedCards forLesson: name];
     [addedCards removeAllObjects];
 
+    NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate: date];
+    NSLog (@"inserting took %.2f seconds", interval);
+
+    date = [NSDate date];
     NSLog (@"updating %d cards", [dirtyCards count]);
     [db updateCards: dirtyCards forLesson: name];
     [dirtyCards removeAllObjects];
+    interval = [[NSDate date] timeIntervalSinceDate: date];
+    NSLog (@"updating took %.2f seconds", interval);
 
+    date = [NSDate date];
     NSLog (@"deleting %d cards", [deletedCards count]);
     [db deleteCards: deletedCards forLesson: name];
     [deletedCards removeAllObjects];
+    interval = [[NSDate date] timeIntervalSinceDate: date];
+    NSLog (@"deleting took %.2f seconds", interval);
+}
+
+- (void) benchmarkWithNumberOfCards: (int) numberOfCards
+{
+    int i = 0;
+    for (Card *card in cards) {
+        [self setCardDirty: card];
+        if (++i >= numberOfCards)
+            break;
+    }
+    [self save];
 }
 
 @end

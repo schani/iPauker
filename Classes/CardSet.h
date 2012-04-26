@@ -58,4 +58,6 @@
 
 - (void) save;
 
+- (void) benchmarkWithNumberOfCards: (int) numberOfCards;
+
 @end
