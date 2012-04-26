@@ -114,6 +114,22 @@ static sqlite3_stmt *delete_stmt = NULL;
     return cardSet;
 }
 
+- (void) beginTransaction
+{
+    static const char *sql = "BEGIN TRANSACTION";
+
+    if (sqlite3_exec (database, sql, NULL, 0, NULL) != SQLITE_OK)
+        NSAssert (NO, @"Could not begin transaction");
+}
+
+- (void) commitTransaction
+{
+    static const char *sql = "COMMIT TRANSACTION";
+
+    if (sqlite3_exec(database, sql, NULL, 0, NULL) != SQLITE_OK)
+        NSAssert (NO, @"Could not commit transaction");
+}
+
 - (void) insertCards: (NSSet*) set forLesson: (NSString*) lesson
 {
     NSEnumerator *enumerator;
@@ -127,7 +143,9 @@ static sqlite3_stmt *delete_stmt = NULL;
 	if (sqlite3_prepare_v2(database, sql, -1, &insert_stmt, NULL) != SQLITE_OK)
 	    NSAssert(NO, @"Could not prepare SQL statement");
     }
-    
+
+    [self beginTransaction];
+
     enumerator = [set objectEnumerator];
     while (card = [enumerator nextObject]) {
 	sqlite3_bind_int(insert_stmt, 1, [card key]);
@@ -148,6 +166,8 @@ static sqlite3_stmt *delete_stmt = NULL;
 	
 	sqlite3_reset(insert_stmt);
     }
+
+    [self commitTransaction];
 }
 
 - (void) updateCards: (NSSet*) cards forLesson: (NSString*) lesson
@@ -163,7 +183,9 @@ static sqlite3_stmt *delete_stmt = NULL;
 	if (sqlite3_prepare_v2(database, sql, -1, &update_stmt, NULL) != SQLITE_OK)
 	    NSAssert(NO, @"Could not prepare SQL statement");
     }
-    
+
+    [self beginTransaction];
+
     enumerator = [cards objectEnumerator];
     while (card = [enumerator nextObject]) {
 	sqlite3_bind_int(update_stmt, 1, [[card frontSide] batch]);
@@ -181,6 +203,8 @@ static sqlite3_stmt *delete_stmt = NULL;
 
 	sqlite3_reset(update_stmt);
     }
+
+    [self commitTransaction];
 }
 
 - (void) deleteCards: (NSSet*) cards forLesson: (NSString*) lesson
@@ -195,6 +219,8 @@ static sqlite3_stmt *delete_stmt = NULL;
 	    NSAssert (NO, @"Could not prepare SQL statement");
     }
 
+    [self beginTransaction];
+
     enumerator = [cards objectEnumerator];
     while (card = [enumerator nextObject]) {
 	sqlite3_bind_int (delete_stmt, 1, [card key]);
@@ -204,6 +230,8 @@ static sqlite3_stmt *delete_stmt = NULL;
 
 	sqlite3_reset (delete_stmt);
     }
+
+    [self commitTransaction];
 }
 
 @end
