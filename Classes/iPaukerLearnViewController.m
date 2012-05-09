@@ -273,6 +273,10 @@
 - (void) applicationDidBecomeActive: (NSNotification*) notification
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    if ([processing hasTime])
+        [processing updateTimeWithState: [defaults objectForKey: SAVED_STATE_KEY]];
+
     [defaults removeObjectForKey: SAVED_STATE_KEY];
     [defaults synchronize];
 }

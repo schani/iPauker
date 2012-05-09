@@ -31,14 +31,12 @@
     self = [super initWithController: c state: state];
     if (self != nil) {
         CardSet *cs = [c cardSet];
-        long long time = [iPaukerAppDelegate updateAndGetTime];
 
         newCards = [[[state objectForKey: @"newCards"] arrayWithCardsFromCardSet: cs] mutableCopy];
         repeatCards = [[[state objectForKey: @"repeatCards"] arrayWithCardsFromCardSet: cs] mutableCopy];
         knownCards = [[[state objectForKey: @"knownCards"] arrayWithCardsFromCardSet: cs] mutableCopy];
         mode = [[state objectForKey: @"mode"] intValue];
-        startTime = time - [[state objectForKey: @"startTime"] longLongValue];
-        memorizeStartTime = time - [[state objectForKey: @"memorizeStartTime"] longLongValue];
+        [self updateTimeWithState: state];
     }
     return self;
 }
@@ -213,6 +211,14 @@
 - (BOOL) hasTime
 {
     return YES;
+}
+
+- (void) updateTimeWithState: (NSDictionary*) state
+{
+    long long time = [iPaukerAppDelegate updateAndGetTime];
+
+    startTime = time - [[state objectForKey: @"startTime"] longLongValue];
+    memorizeStartTime = time - [[state objectForKey: @"memorizeStartTime"] longLongValue];
 }
 
 - (int) timeTo: (long long) duration since: (long long) start

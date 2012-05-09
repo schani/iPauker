@@ -34,6 +34,8 @@
 
 - (BOOL) hasTime;
 
+- (void) updateTimeWithState: (NSDictionary*) state;
+
 - (int) time;
 - (int) subTime;
 

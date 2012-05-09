@@ -80,6 +80,11 @@
     return NO;
 }
 
+- (void) updateTimeWithState: (NSDictionary*) state
+{
+    [self doesNotRecognizeSelector: _cmd];
+}
+
 - (int) time
 {
     [self doesNotRecognizeSelector: _cmd];
