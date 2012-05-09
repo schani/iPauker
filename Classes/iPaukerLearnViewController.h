@@ -12,7 +12,7 @@
 
 @class CardProcessing;
 
-@interface iPaukerLearnViewController : UIViewController {
+@interface iPaukerLearnViewController : UIViewController <UIActionSheetDelegate> {
     IBOutlet UITextView *questionText;
     IBOutlet UITextView *answerText;
     IBOutlet UIBarButtonItem *showButton;

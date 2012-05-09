@@ -101,7 +101,19 @@
     }
 }
 
-- (IBAction)cancel:(id)sender {
+- (IBAction)cancel:(id)sender
+{
+    [[[UIActionSheet alloc] initWithTitle: @"Really cancel?"
+                                 delegate: self
+                        cancelButtonTitle: @"No"
+                   destructiveButtonTitle: @"Yes"
+                        otherButtonTitles: nil] showInView: [self view]];
+}
+
+- (void) actionSheet: (UIActionSheet*) actionSheet clickedButtonAtIndex: (NSInteger) buttonIndex
+{
+    if (buttonIndex != [actionSheet destructiveButtonIndex])
+        return;
     [self finishLearning];
 }
 
