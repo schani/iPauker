@@ -75,6 +75,11 @@
     [self nextCard];
 }
 
+- (BOOL) isCancelDestructive
+{
+    return NO;
+}
+
 - (NSDictionary*) state
 {
     NSMutableDictionary *state = [NSMutableDictionary dictionaryWithObjectsAndKeys: 

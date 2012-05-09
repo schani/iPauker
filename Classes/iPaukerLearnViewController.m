@@ -99,10 +99,17 @@
         [timeLabel setHidden: YES];
         [subTimeLabel setHidden: YES];
     }
+
+    [cancelButton setTitle: [processing isCancelDestructive] ? @"Cancel" : @"Done"];
 }
 
 - (IBAction)cancel:(id)sender
 {
+    if (![processing isCancelDestructive]) {
+        [self finishLearning];
+        return;
+    }
+
     [[[UIActionSheet alloc] initWithTitle: @"Really cancel?"
                                  delegate: self
                         cancelButtonTitle: @"No"
@@ -137,6 +144,8 @@
 
     [timeLabel release];
     [subTimeLabel release];
+    [cancelButton release];
+
 	[super dealloc];
 }
 
@@ -311,6 +320,9 @@
     timeLabel = nil;
     [subTimeLabel release];
     subTimeLabel = nil;
+    [cancelButton release];
+    cancelButton = nil;
     [super viewDidUnload];
 }
+
 @end

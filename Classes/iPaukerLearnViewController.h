@@ -18,6 +18,7 @@
     IBOutlet UIBarButtonItem *showButton;
     IBOutlet UIBarButtonItem *correctButton;
     IBOutlet UIBarButtonItem *incorrectButton;
+    IBOutlet UIBarButtonItem *cancelButton;
     IBOutlet UILabel *timeLabel;
     IBOutlet UILabel *subTimeLabel;
 

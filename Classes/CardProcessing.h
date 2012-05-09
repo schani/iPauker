@@ -30,6 +30,8 @@
 - (void) correct;
 - (void) incorrect;
 
+- (BOOL) isCancelDestructive;
+
 - (NSDictionary*) state;
 
 - (BOOL) hasTime;

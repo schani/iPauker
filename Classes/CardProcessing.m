@@ -68,6 +68,11 @@
     [self doesNotRecognizeSelector: _cmd];
 }
 
+- (BOOL) isCancelDestructive
+{
+    return YES;
+}
+
 - (NSDictionary*) state
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:
