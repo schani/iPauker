@@ -16,7 +16,12 @@
     BOOL started;
 }
 
++ (id) cardProcessingWithController: (iPaukerLearnViewController*) c
+                              state: (NSDictionary*) state;
+
 - (id) initWithController: (iPaukerLearnViewController*) c;
+- (id) initWithController: (iPaukerLearnViewController*) c
+                    state: (NSDictionary*) state;
 
 - (void) start;
 
@@ -24,5 +29,7 @@
 
 - (void) correct;
 - (void) incorrect;
+
+- (NSDictionary*) state;
 
 @end

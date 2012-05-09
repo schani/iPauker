@@ -1,0 +1,3 @@
+[submodule "Functional.m"]
+	path = Functional.m
+	url = https://github.com/leuchtetgruen/Functional.m.git

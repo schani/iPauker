@@ -21,15 +21,20 @@
     
     BOOL isLoaded;
 
-    CardProcessing *processing;
+    CardProcessing *processing; // nil if we are to restore from saved state
     Card *card;
     CardSet *cardSet;
 }
+
+- (CardSet*) cardSet;
 
 - (IBAction)cancel:(id)sender;
 - (IBAction)show:(id)sender;
 - (IBAction)correct:(id)sender;
 - (IBAction)incorrect:(id)sender;
+
++ (BOOL) hasSavedState;
+- (void) restoreFromSavedStateWithCardSet: (CardSet*) cs;
 
 - (BOOL) learnNewFromCardSet: (CardSet*) cardSet;
 - (BOOL) repeatExpiredFromCardSet: (CardSet*) cardSet;

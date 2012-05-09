@@ -8,7 +8,24 @@
 
 #import "CardProcessing.h"
 
+#import "LearnProcessing.h"
+#import "RepeatProcessing.h"
+
 @implementation CardProcessing
+
++ (id) cardProcessingWithController: (iPaukerLearnViewController*) c
+                              state: (NSDictionary*) state
+{
+    NSString *className = [state objectForKey: @"class"];
+
+    if ([className isEqualToString: @"LearnProcessing"])
+        return [[[LearnProcessing alloc] initWithController: c state: state] autorelease];
+    if ([className isEqualToString: @"RepeatProcessing"])
+        return [[[RepeatProcessing alloc] initWithController: c state: state] autorelease];
+
+    NSAssert (NO, @"Unknown card processing class");
+    return NO;
+}
 
 - (id) initWithController: (iPaukerLearnViewController*) c
 {
@@ -17,6 +34,17 @@
     controller = c;
     started = NO;
     
+    return self;
+}
+
+- (id) initWithController: (iPaukerLearnViewController*) c
+                    state: (NSDictionary*) state
+{
+    self = [super init];
+    if (self != nil) {
+        controller = c;
+        started = YES;
+    }
     return self;
 }
 
@@ -38,6 +66,13 @@
 - (void) incorrect
 {
     [self doesNotRecognizeSelector: _cmd];
+}
+
+- (NSDictionary*) state
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            NSStringFromClass ([self class]), @"class",
+            nil];
 }
 
 @end

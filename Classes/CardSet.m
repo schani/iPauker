@@ -41,6 +41,7 @@
     [addedCards release];
     [dirtyCards release];
     [deletedCards release];
+    [keysToCards release];
 
     [super dealloc];
 }
@@ -55,6 +56,24 @@
     version = newVersion;
 }
 
+- (void) invalidateKeysToCards
+{
+    [keysToCards release];
+    keysToCards = nil;
+}
+
+- (Card*) cardForKey: (int) key
+{
+    if (keysToCards == nil) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity: [cards count]];
+        for (Card *c in cards)
+            [dict setObject: c forKey: [NSNumber numberWithInt: [c key]]];
+        keysToCards = [dict retain];
+    }
+
+    return [keysToCards objectForKey: [NSNumber numberWithInt: key]];
+}
+
 - (void) addCard: (Card*) card dirty: (BOOL) dirty
 {
     if ([card cardSet])
@@ -67,6 +86,8 @@
     
     if (dirty)
 	[addedCards addObject: card];
+
+    [self invalidateKeysToCards];
 }
 
 - (void) setCardDirty: (Card*) card
@@ -86,6 +107,8 @@
 
     [cards replaceObjectAtIndex: index withObject: card];
     [self setCardDirty: card];
+
+    [self invalidateKeysToCards];
 }
 
 - (void) removeCardAtIndex: (NSUInteger) index
@@ -98,6 +121,8 @@
 
     [cards removeObjectAtIndex: index];
     [card setCardSet: nil];
+
+    [self invalidateKeysToCards];
 }
 
 - (void) updateWithDeletedCardSet: (CardSet*) dcs cardSet: (CardSet*) cs;
@@ -128,6 +153,8 @@
 	    [self replaceCardAtIndex: index withCard: card];
 	}
     }
+
+    [self invalidateKeysToCards];
 }
 
 - (int) numTotalCards

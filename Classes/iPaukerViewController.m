@@ -17,6 +17,16 @@
 	[self updateStats];
 }
 
+- (void) viewDidAppear: (BOOL) animated
+{
+    if (![iPaukerLearnViewController hasSavedState])
+        return;
+
+    [self loadLearnViewController];
+    [learnViewController restoreFromSavedStateWithCardSet: cardSet];
+    [self presentModalViewController: learnViewController animated: NO];
+}
+
 - (void) dealloc
 {
     [cardSet release];

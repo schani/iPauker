@@ -20,6 +20,11 @@
 		8E2740760E539693008A1AD6 /* RepeatProcessing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2740750E539693008A1AD6 /* RepeatProcessing.m */; };
 		8E2741660E53A72B008A1AD6 /* LearnProcessing.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2741650E53A72B008A1AD6 /* LearnProcessing.m */; };
 		8E27421B0E563435008A1AD6 /* XMLParserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E27421A0E563435008A1AD6 /* XMLParserDelegate.m */; };
+		8E8C6F0D1557573400CAFBA0 /* F.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C6F061557573400CAFBA0 /* F.m */; };
+		8E8C6F0E1557573400CAFBA0 /* NSArray+F.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C6F081557573400CAFBA0 /* NSArray+F.m */; };
+		8E8C6F0F1557573400CAFBA0 /* NSDictionary+F.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C6F0A1557573400CAFBA0 /* NSDictionary+F.m */; };
+		8E8C6F101557573400CAFBA0 /* NSNumber+F.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C6F0C1557573400CAFBA0 /* NSNumber+F.m */; };
+		8E8C6F1315585F5100CAFBA0 /* NSArray+iPauker.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C6F1215585F5100CAFBA0 /* NSArray+iPauker.m */; };
 		8EA2C05D0E52449100928C39 /* CardSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA2C05C0E52449100928C39 /* CardSet.m */; };
 		8EA2C0A70E524B7C00928C39 /* iPaukerLearnViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA2C0A60E524B7C00928C39 /* iPaukerLearnViewController.m */; };
 		8EA2C0A90E524BA000928C39 /* iPaukerLearnViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EA2C0A80E524BA000928C39 /* iPaukerLearnViewController.xib */; };
@@ -58,6 +63,16 @@
 		8E2741650E53A72B008A1AD6 /* LearnProcessing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LearnProcessing.m; sourceTree = "<group>"; };
 		8E2742190E563435008A1AD6 /* XMLParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLParserDelegate.h; sourceTree = "<group>"; };
 		8E27421A0E563435008A1AD6 /* XMLParserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLParserDelegate.m; sourceTree = "<group>"; };
+		8E8C6F051557573400CAFBA0 /* F.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = F.h; path = Functional.m/F.h; sourceTree = "<group>"; };
+		8E8C6F061557573400CAFBA0 /* F.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = F.m; path = Functional.m/F.m; sourceTree = "<group>"; };
+		8E8C6F071557573400CAFBA0 /* NSArray+F.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+F.h"; path = "Functional.m/NSArray+F.h"; sourceTree = "<group>"; };
+		8E8C6F081557573400CAFBA0 /* NSArray+F.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+F.m"; path = "Functional.m/NSArray+F.m"; sourceTree = "<group>"; };
+		8E8C6F091557573400CAFBA0 /* NSDictionary+F.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+F.h"; path = "Functional.m/NSDictionary+F.h"; sourceTree = "<group>"; };
+		8E8C6F0A1557573400CAFBA0 /* NSDictionary+F.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+F.m"; path = "Functional.m/NSDictionary+F.m"; sourceTree = "<group>"; };
+		8E8C6F0B1557573400CAFBA0 /* NSNumber+F.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNumber+F.h"; path = "Functional.m/NSNumber+F.h"; sourceTree = "<group>"; };
+		8E8C6F0C1557573400CAFBA0 /* NSNumber+F.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+F.m"; path = "Functional.m/NSNumber+F.m"; sourceTree = "<group>"; };
+		8E8C6F1115585F5100CAFBA0 /* NSArray+iPauker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+iPauker.h"; path = "Classes/NSArray+iPauker.h"; sourceTree = "<group>"; };
+		8E8C6F1215585F5100CAFBA0 /* NSArray+iPauker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+iPauker.m"; path = "Classes/NSArray+iPauker.m"; sourceTree = "<group>"; };
 		8EA2C05B0E52449100928C39 /* CardSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardSet.h; sourceTree = "<group>"; };
 		8EA2C05C0E52449100928C39 /* CardSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardSet.m; sourceTree = "<group>"; };
 		8EA2C0A50E524B7C00928C39 /* iPaukerLearnViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iPaukerLearnViewController.h; sourceTree = "<group>"; };
@@ -100,13 +115,13 @@
 				28D7ACF60DDB3853001CB0EB /* iPaukerViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* iPaukerViewController.m */,
 				8EA2C0A50E524B7C00928C39 /* iPaukerLearnViewController.h */,
-				8E0446760E53172E004F9047 /* Card.h */,
 				8EA2C0A60E524B7C00928C39 /* iPaukerLearnViewController.m */,
+				8E0446760E53172E004F9047 /* Card.h */,
+				8E0446770E53172E004F9047 /* Card.m */,
 				8EA2C05B0E52449100928C39 /* CardSet.h */,
 				8EA2C05C0E52449100928C39 /* CardSet.m */,
 				8E04468B0E533816004F9047 /* CardSide.h */,
 				8E04468C0E533816004F9047 /* CardSide.m */,
-				8E0446770E53172E004F9047 /* Card.m */,
 				8E2740710E539559008A1AD6 /* CardProcessing.h */,
 				8E2740720E539559008A1AD6 /* CardProcessing.m */,
 				8E2740740E539693008A1AD6 /* RepeatProcessing.h */,
@@ -138,6 +153,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				8E8C6F041557572300CAFBA0 /* Functional.m */,
+				8E8C6F141558889A00CAFBA0 /* Categories */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -176,6 +193,30 @@
 				8ECC797B1205D0970014610F /* libsqlite3.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8E8C6F041557572300CAFBA0 /* Functional.m */ = {
+			isa = PBXGroup;
+			children = (
+				8E8C6F051557573400CAFBA0 /* F.h */,
+				8E8C6F061557573400CAFBA0 /* F.m */,
+				8E8C6F071557573400CAFBA0 /* NSArray+F.h */,
+				8E8C6F081557573400CAFBA0 /* NSArray+F.m */,
+				8E8C6F091557573400CAFBA0 /* NSDictionary+F.h */,
+				8E8C6F0A1557573400CAFBA0 /* NSDictionary+F.m */,
+				8E8C6F0B1557573400CAFBA0 /* NSNumber+F.h */,
+				8E8C6F0C1557573400CAFBA0 /* NSNumber+F.m */,
+			);
+			name = Functional.m;
+			sourceTree = "<group>";
+		};
+		8E8C6F141558889A00CAFBA0 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				8E8C6F1115585F5100CAFBA0 /* NSArray+iPauker.h */,
+				8E8C6F1215585F5100CAFBA0 /* NSArray+iPauker.m */,
+			);
+			name = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,6 +301,11 @@
 				8EC3A3C60EABDAA300EB02B2 /* DatabaseController.m in Sources */,
 				8EC3A3D00EABE5DB00EB02B2 /* PreferencesController.m in Sources */,
 				8E1A836D120F4F44002D2C2F /* iPaukerPreferencesViewController.m in Sources */,
+				8E8C6F0D1557573400CAFBA0 /* F.m in Sources */,
+				8E8C6F0E1557573400CAFBA0 /* NSArray+F.m in Sources */,
+				8E8C6F0F1557573400CAFBA0 /* NSDictionary+F.m in Sources */,
+				8E8C6F101557573400CAFBA0 /* NSNumber+F.m in Sources */,
+				8E8C6F1315585F5100CAFBA0 /* NSArray+iPauker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

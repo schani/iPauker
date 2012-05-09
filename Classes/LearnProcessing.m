@@ -8,6 +8,7 @@
 
 #import "iPaukerAppDelegate.h"
 #import "PreferencesController.h"
+#import "NSArray+iPauker.h"
 
 #import "LearnProcessing.h"
 
@@ -21,6 +22,24 @@
     repeatCards = [[NSMutableArray arrayWithCapacity: 16] retain];
     knownCards = [[NSMutableArray arrayWithCapacity: 64] retain];
 
+    return self;
+}
+
+- (id) initWithController: (iPaukerLearnViewController*) c
+                    state: (NSDictionary*) state
+{
+    self = [super initWithController: c state: state];
+    if (self != nil) {
+        CardSet *cs = [c cardSet];
+        long long time = [iPaukerAppDelegate updateAndGetTime];
+
+        newCards = [[[state objectForKey: @"newCards"] arrayWithCardsFromCardSet: cs] mutableCopy];
+        repeatCards = [[[state objectForKey: @"repeatCards"] arrayWithCardsFromCardSet: cs] mutableCopy];
+        knownCards = [[[state objectForKey: @"knownCards"] arrayWithCardsFromCardSet: cs] mutableCopy];
+        mode = [[state objectForKey: @"mode"] intValue];
+        startTime = time - [[state objectForKey: @"startTime"] longLongValue];
+        memorizeStartTime = time - [[state objectForKey: @"memorizeStartTime"] longLongValue];
+    }
     return self;
 }
 
@@ -174,6 +193,21 @@
     }
 
     [self showFrontCard];
+}
+
+- (NSDictionary*) state
+{
+    long long time = [iPaukerAppDelegate updateAndGetTime];
+    NSMutableDictionary *state = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  [newCards arrayWithCardKeys], @"newCards",
+                                  [repeatCards arrayWithCardKeys], @"repeatCards",
+                                  [knownCards arrayWithCardKeys], @"knownCards",
+                                  [NSNumber numberWithInt: mode], @"mode",
+                                  [NSNumber numberWithLongLong: time - startTime], @"startTime",
+                                  [NSNumber numberWithLongLong: time - memorizeStartTime], @"memorizeStartTime",
+                                  nil];
+    [state addEntriesFromDictionary: [super state]];
+    return state;
 }
 
 @end

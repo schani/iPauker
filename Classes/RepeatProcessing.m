@@ -6,6 +6,8 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
+#import "NSArray+iPauker.h"
+
 #import "RepeatProcessing.h"
 
 @implementation RepeatProcessing
@@ -17,6 +19,17 @@
     cards = [cs retain];
     index = -1;
 
+    return self;
+}
+
+- (id) initWithController: (iPaukerLearnViewController*) c
+                    state: (NSDictionary*) state
+{
+    self = [super initWithController: c state: state];
+    if (self != nil) {
+        index = [[state objectForKey: @"index"] intValue];
+        cards = [[[state objectForKey: @"cards"] arrayWithCardsFromCardSet: [c cardSet]] retain];
+    }
     return self;
 }
 
@@ -60,6 +73,16 @@
     NSLog (@"incorrect");
     [[[cards objectAtIndex: index] questionSide] setNew];
     [self nextCard];
+}
+
+- (NSDictionary*) state
+{
+    NSMutableDictionary *state = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+                                  [NSNumber numberWithInt: index], @"index",
+                                  [cards arrayWithCardKeys], @"cards",
+                                  nil];
+    [state addEntriesFromDictionary: [super state]];
+    return state;
 }
 
 @end

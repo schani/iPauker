@@ -29,6 +29,8 @@
     NSMutableSet *addedCards;
     NSMutableSet *dirtyCards;
     NSMutableSet *deletedCards;
+
+    NSDictionary *keysToCards;
 }
 
 - (id) initWithName: (NSString*) cardSetName;
@@ -38,6 +40,8 @@
 
 - (void) addCard: (Card*) card dirty: (BOOL) dirty;
 - (void) setCardDirty: (Card*) card;
+
+- (Card*) cardForKey: (int) key;
 
 - (void) updateWithDeletedCardSet: (CardSet*) dcs cardSet: (CardSet*) cs;
 

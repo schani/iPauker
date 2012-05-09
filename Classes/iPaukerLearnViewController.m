@@ -10,6 +10,8 @@
 #import "RepeatProcessing.h"
 #import "LearnProcessing.h"
 
+#define SAVED_STATE_KEY @"iPaukerLearnViewController.state"
+
 @implementation iPaukerLearnViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -30,27 +32,49 @@
     NSLog (@"will appear");
 
     [super viewWillAppear: animated];
-    
-    if (isLoaded && processing)
+
+    if (!isLoaded)
+        return;
+
+    if (processing == nil) {
+        NSAssert (cardSet != nil, @"Cannot learn without a card set");
+
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSDictionary *state = [defaults dictionaryForKey: SAVED_STATE_KEY];
+        NSAssert (state != nil, @"No saved state");
+        [defaults removeObjectForKey: SAVED_STATE_KEY];
+
+        [showButton setTitle: [state objectForKey: @"showButtonTitle"]];
+        [questionText setText: [state objectForKey: @"questionText"]];
+        [answerText setText: [state objectForKey: @"answerText"]];
+        [showButton setEnabled: [[state objectForKey: @"showButtonEnabled"] boolValue]];
+        [correctButton setEnabled: [[state objectForKey: @"correctButtonEnabled"] boolValue]];
+        [incorrectButton setEnabled: [[state objectForKey: @"incorrectButtonEnabled"] boolValue]];
+        NSNumber *key = [state objectForKey: @"card"];
+        if (key != nil) {
+            card = [[cardSet cardForKey: [key intValue]] retain];
+            NSAssert (card != nil, @"Saved card not found");
+        }
+
+        processing = [[CardProcessing cardProcessingWithController: self state: state] retain];
+    }
+
 	[processing start];
+
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector (applicationWillResignActive:)
+                                                 name: UIApplicationWillResignActiveNotification
+                                               object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector (applicationDidBecomeActive:)
+                                                 name: UIApplicationDidBecomeActiveNotification
+                                               object: nil];
+    NSLog (@"registered for termination");
 }
 
 - (IBAction)cancel:(id)sender {
     [self finishLearning];
 }
-
-/*
- Implement loadView if you want to create a view hierarchy programmatically
-- (void)loadView {
-}
- */
-
-/*
- If you need to do additional setup after loading the view, override viewDidLoad.
-- (void)viewDidLoad {
-}
- */
-
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	// Return YES for supported orientations
@@ -65,7 +89,13 @@
 
 
 - (void)dealloc {
+    // FIXME: implement!
 	[super dealloc];
+}
+
+- (CardSet*) cardSet
+{
+    return cardSet;
 }
 
 - (BOOL) learnNewFromCardSet: (CardSet*) _cardSet
@@ -178,6 +208,47 @@
     cardSet = nil;
 
     [self dismissModalViewControllerAnimated: TRUE];
+}
+
+- (void) applicationWillResignActive: (NSNotification*) notification
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSMutableDictionary *state = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  [showButton title], @"showButtonTitle",
+                                  [questionText text], @"questionText",
+                                  [answerText text], @"answerText",
+                                  [NSNumber numberWithBool: [showButton isEnabled]], @"showButtonEnabled",
+                                  [NSNumber numberWithBool: [correctButton isEnabled]], @"correctButtonEnabled",
+                                  [NSNumber numberWithBool: [incorrectButton isEnabled]], @"incorrectButtonEnabled",
+                                  nil];
+    if (card != nil)
+        [state setObject: [NSNumber numberWithInt: [card key]] forKey: @"card"];
+    [state addEntriesFromDictionary: [processing state]];
+
+    [defaults setObject: state forKey: SAVED_STATE_KEY];
+    [defaults synchronize];
+
+    NSLog (@"state saved");
+}
+
+- (void) applicationDidBecomeActive: (NSNotification*) notification
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey: SAVED_STATE_KEY];
+    [defaults synchronize];
+}
+
++ (BOOL) hasSavedState
+{
+    return [[NSUserDefaults standardUserDefaults] dictionaryForKey: SAVED_STATE_KEY] != nil;
+}
+
+- (void) restoreFromSavedStateWithCardSet: (CardSet*) cs
+{
+    NSAssert (!processing, @"Already processing");
+    NSAssert (!cardSet, @"Have cardSet");
+
+    cardSet = [cs retain];
 }
 
 @end
