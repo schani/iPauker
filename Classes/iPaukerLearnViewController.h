@@ -18,12 +18,16 @@
     IBOutlet UIBarButtonItem *showButton;
     IBOutlet UIBarButtonItem *correctButton;
     IBOutlet UIBarButtonItem *incorrectButton;
-    
+    IBOutlet UILabel *timeLabel;
+    IBOutlet UILabel *subTimeLabel;
+
     BOOL isLoaded;
 
     CardProcessing *processing; // nil if we are to restore from saved state
     Card *card;
     CardSet *cardSet;
+
+    NSTimer *timer;
 }
 
 - (CardSet*) cardSet;

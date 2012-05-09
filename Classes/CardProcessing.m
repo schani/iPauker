@@ -75,4 +75,21 @@
             nil];
 }
 
+- (BOOL) hasTime
+{
+    return NO;
+}
+
+- (int) time
+{
+    [self doesNotRecognizeSelector: _cmd];
+    return -1;
+}
+
+- (int) subTime
+{
+    [self doesNotRecognizeSelector: _cmd];
+    return -1;
+}
+
 @end

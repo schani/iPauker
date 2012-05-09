@@ -32,4 +32,9 @@
 
 - (NSDictionary*) state;
 
+- (BOOL) hasTime;
+
+- (int) time;
+- (int) subTime;
+
 @end

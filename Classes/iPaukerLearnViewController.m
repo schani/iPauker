@@ -27,6 +27,23 @@
     isLoaded = YES;
 }
 
+- (void) updateTimeLabel: (UILabel*) label withTime: (int) time
+{
+    if (time < 0) {
+        [label setHidden: YES];
+        return;
+    }
+
+    [label setHidden: NO];
+    [label setText: [NSString stringWithFormat: @"%02d:%02d", time / 60, time % 60]];
+}
+
+- (void) updateTime: (NSTimer*) timer
+{
+    [self updateTimeLabel: timeLabel withTime: [processing time]];
+    [self updateTimeLabel: subTimeLabel withTime: [processing subTime]];
+}
+
 - (void) viewWillAppear: (BOOL) animated
 {
     NSLog (@"will appear");
@@ -70,6 +87,18 @@
                                                  name: UIApplicationDidBecomeActiveNotification
                                                object: nil];
     NSLog (@"registered for termination");
+
+    if ([processing hasTime]) {
+        [self updateTime: nil];
+        timer = [[NSTimer scheduledTimerWithTimeInterval: 1
+                                                  target: self
+                                                selector: @selector (updateTime:)
+                                                userInfo: nil
+                                                 repeats: YES] retain];
+    } else {
+        [timeLabel setHidden: YES];
+        [subTimeLabel setHidden: YES];
+    }
 }
 
 - (IBAction)cancel:(id)sender {
@@ -90,6 +119,12 @@
 
 - (void)dealloc {
     // FIXME: implement!
+
+    [timer invalidate];
+    [timer release];
+
+    [timeLabel release];
+    [subTimeLabel release];
 	[super dealloc];
 }
 
@@ -198,7 +233,11 @@
 	[card autorelease];
 	card = nil;
     }
-    
+
+    [timer invalidate];
+    [timer release];
+    timer = nil;
+
     [processing autorelease];
     processing = nil;
 
@@ -251,4 +290,11 @@
     cardSet = [cs retain];
 }
 
+- (void)viewDidUnload {
+    [timeLabel release];
+    timeLabel = nil;
+    [subTimeLabel release];
+    subTimeLabel = nil;
+    [super viewDidUnload];
+}
 @end

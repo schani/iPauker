@@ -210,4 +210,35 @@
     return state;
 }
 
+- (BOOL) hasTime
+{
+    return YES;
+}
+
+- (int) timeTo: (long long) duration since: (long long) start
+{
+    long long time = [iPaukerAppDelegate updateAndGetTime];
+    long long passed = time - start;
+    int rest = (duration - passed) / 1000;
+    if (rest < 0)
+        return 0;
+    return rest;
+}
+
+- (int) time
+{
+    if (mode == MODE_REPEAT_KNOWN)
+        return -1;
+    return [self timeTo: [[PreferencesController sharedPreferencesController] shortTermMemoryDuration]
+                  since: startTime];
+}
+
+- (int) subTime
+{
+    if (mode != MODE_MEMORIZE)
+        return -1;
+    return [self timeTo: [[PreferencesController sharedPreferencesController] ultraShortTermMemoryDuration]
+                  since: memorizeStartTime];
+}
+
 @end
