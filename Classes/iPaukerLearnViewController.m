@@ -296,7 +296,7 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     if ([processing hasTime])
-        [processing updateTimeWithState: [defaults objectForKey: SAVED_STATE_KEY]];
+        [processing updateTimeWithState: [defaults dictionaryForKey: SAVED_STATE_KEY]];
 
     [defaults removeObjectForKey: SAVED_STATE_KEY];
     [defaults synchronize];
