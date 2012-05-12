@@ -272,6 +272,9 @@
 
 - (void) applicationWillResignActive: (NSNotification*) notification
 {
+    if (processing == nil)
+        return;
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSMutableDictionary *state = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                   [showButton title], @"showButtonTitle",
@@ -294,9 +297,13 @@
 - (void) applicationDidBecomeActive: (NSNotification*) notification
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *state = [defaults dictionaryForKey: SAVED_STATE_KEY];
+
+    if (state == nil)
+        return;
 
     if ([processing hasTime])
-        [processing updateTimeWithState: [defaults dictionaryForKey: SAVED_STATE_KEY]];
+        [processing updateTimeWithState: state];
 
     [defaults removeObjectForKey: SAVED_STATE_KEY];
     [defaults synchronize];
@@ -304,7 +311,13 @@
 
 + (BOOL) hasSavedState
 {
-    return [[NSUserDefaults standardUserDefaults] dictionaryForKey: SAVED_STATE_KEY] != nil;
+    NSDictionary *state = [[NSUserDefaults standardUserDefaults] dictionaryForKey: SAVED_STATE_KEY];
+    if (state == nil)
+        return NO;
+    // FIXME: this is a hack - sometimes the state seems to be saved without a class
+    if ([state objectForKey: @"class"] == nil)
+        return NO;
+    return YES;
 }
 
 - (void) restoreFromSavedStateWithCardSet: (CardSet*) cs
