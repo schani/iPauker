@@ -24,7 +24,7 @@
         return [[[RepeatProcessing alloc] initWithController: c state: state] autorelease];
 
     NSAssert (NO, @"Unknown card processing class");
-    return NO;
+    return nil;
 }
 
 - (id) initWithController: (iPaukerLearnViewController*) c
