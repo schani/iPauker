@@ -49,7 +49,7 @@
 				 reverseTimestamp: [reverseSide timestamp]
 					      key: key] autorelease];
     if (changed)
-	[card setChanged];
+        [card setChangedAndDirty: NO];
     return card;
 }
 
@@ -100,14 +100,14 @@
     return changed;
 }
 
-- (void) setChanged
+- (void) setChangedAndDirty: (BOOL) setDirty
 {
-    if (changed)
-	return;
+    if (setDirty) {
+        NSAssert (cardSet != nil, @"Cannot set dirty without card set");
+        [cardSet setCardDirty: self];
+    }
 
     changed = YES;
-    if (cardSet)
-	[cardSet setCardDirty: self];
 }
 
 - (void) setNotChanged

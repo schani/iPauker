@@ -45,7 +45,7 @@
 - (CardSide*) reverseSide;
 
 - (BOOL) isChanged;
-- (void) setChanged;
+- (void) setChangedAndDirty: (BOOL) setDirty;
 - (void) setNotChanged;
 
 - (int) key;

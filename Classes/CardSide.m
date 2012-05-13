@@ -45,7 +45,7 @@
 
 - (void) markChange
 {
-    [card setChanged];
+    [card setChangedAndDirty: YES];
     timestamp = [iPaukerAppDelegate updateAndGetTime];
     [[card cardSet] cardsMoved];
 }
