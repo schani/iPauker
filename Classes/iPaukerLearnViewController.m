@@ -249,7 +249,9 @@
 - (void) finishLearning
 {
     NSAssert (processing, @"Not processing");
-    
+
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+
     if (card) {
 	[card autorelease];
 	card = nil;
