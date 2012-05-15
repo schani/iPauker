@@ -90,4 +90,9 @@
     return state;
 }
 
+- (int) cardCount
+{
+    return [cards count] - index;
+}
+
 @end

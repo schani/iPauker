@@ -247,4 +247,13 @@
                   since: memorizeStartTime];
 }
 
+- (int) cardCount
+{
+    if (mode == MODE_REPEAT_MEMORIZED)
+        return [repeatCards count];
+    if (mode == MODE_REPEAT_KNOWN)
+        return [knownCards count];
+    return -1;
+}
+
 @end

@@ -102,4 +102,9 @@
     return -1;
 }
 
+- (int) cardCount
+{
+    return -1;
+}
+
 @end

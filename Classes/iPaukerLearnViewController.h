@@ -21,6 +21,7 @@
     IBOutlet UIBarButtonItem *cancelButton;
     IBOutlet UILabel *timeLabel;
     IBOutlet UILabel *subTimeLabel;
+    IBOutlet UILabel *cardCountLabel;
 
     BOOL isLoaded;
 

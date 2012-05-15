@@ -146,6 +146,7 @@
     [subTimeLabel release];
     [cancelButton release];
 
+    [cardCountLabel release];
 	[super dealloc];
 }
 
@@ -190,6 +191,17 @@
     return YES;
 }
 
+- (void) updateCardCount
+{
+    int count = [processing cardCount];
+    if (count < 0) {
+        [cardCountLabel setHidden: YES];
+    } else {
+        [cardCountLabel setHidden: NO];
+        [cardCountLabel setText: [NSString stringWithFormat: @"%d", count]];
+    }
+}
+
 - (IBAction)show:(id)sender
 {
     if (card) {
@@ -230,6 +242,8 @@
     [showButton setEnabled: YES];
     [correctButton setEnabled: NO];
     [incorrectButton setEnabled: NO];    
+
+    [self updateCardCount];
 }
 
 - (void) showCard: (Card*) c
@@ -244,6 +258,8 @@
     [showButton setEnabled: YES];
     [correctButton setEnabled: NO];
     [incorrectButton setEnabled: NO];
+
+    [self updateCardCount];
 }
 
 - (void) finishLearning
@@ -337,6 +353,8 @@
     subTimeLabel = nil;
     [cancelButton release];
     cancelButton = nil;
+    [cardCountLabel release];
+    cardCountLabel = nil;
     [super viewDidUnload];
 }
 

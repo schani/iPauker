@@ -41,4 +41,6 @@
 - (int) time;
 - (int) subTime;
 
+- (int) cardCount;
+
 @end
