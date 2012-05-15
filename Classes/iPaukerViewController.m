@@ -7,6 +7,19 @@
 
 @implementation iPaukerViewController
 
+- (void) viewDidLoad
+{
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector (applicationDidBecomeActive:)
+                                                 name: UIApplicationDidBecomeActiveNotification
+                                               object: nil];
+}
+
+- (void) viewDidUnload
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+}
+
 - (void) viewWillAppear: (BOOL) animated
 {
     NSLog (@"main view will appear");
@@ -222,6 +235,11 @@
     NSLog(@"Download failed");
     [cardSet save];
     [self enableAllButtons];
+}
+
+- (void) applicationDidBecomeActive: (NSNotification*) notification
+{
+    [self updateStats];
 }
 
 @end
