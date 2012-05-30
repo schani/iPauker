@@ -14,6 +14,19 @@
 
 @implementation LearnProcessing
 
+- (void) checkCardArray: (NSArray*) cards
+{
+    for (Card *c in cards)
+        NSAssert ([c cardSet] != nil, @"Must have a card set");
+}
+
+- (void) checkCards
+{
+    [self checkCardArray: newCards];
+    [self checkCardArray: repeatCards];
+    [self checkCardArray: knownCards];
+}
+
 - (id) initWithController: (iPaukerLearnViewController*) c cards: (NSArray*) cards
 {
     self = [super initWithController: c];
@@ -21,6 +34,8 @@
     newCards = [[NSMutableArray arrayWithArray: cards] retain];
     repeatCards = [[NSMutableArray arrayWithCapacity: 16] retain];
     knownCards = [[NSMutableArray arrayWithCapacity: 64] retain];
+
+    [self checkCards];
 
     return self;
 }
@@ -37,6 +52,8 @@
         knownCards = [[[state objectForKey: @"knownCards"] arrayWithCardsFromCardSet: cs] mutableCopy];
         mode = [[state objectForKey: @"mode"] intValue];
         [self updateTimeWithState: state];
+
+        [self checkCards];
     }
     return self;
 }

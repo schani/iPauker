@@ -16,6 +16,8 @@
 + (id) cardProcessingWithController: (iPaukerLearnViewController*) c
                               state: (NSDictionary*) state
 {
+    NSAssert ([c cardSet] != nil, @"Must have a card set");
+
     NSString *className = [state objectForKey: @"class"];
 
     if ([className isEqualToString: @"LearnProcessing"])

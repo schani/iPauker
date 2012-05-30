@@ -12,12 +12,20 @@
 
 @implementation RepeatProcessing
 
+- (void) checkCards
+{
+    for (Card *c in cards)
+        NSAssert([c cardSet] != nil, @"Must have a card set");
+}
+
 - (id) initWithController: (iPaukerLearnViewController*) c cards: (NSArray*) cs
 {
     self = [super initWithController: c];
     
     cards = [cs retain];
     index = -1;
+
+    [self checkCards];
 
     return self;
 }
@@ -29,6 +37,7 @@
     if (self != nil) {
         index = [[state objectForKey: @"index"] intValue];
         cards = [[[state objectForKey: @"cards"] arrayWithCardsFromCardSet: [c cardSet]] retain];
+        [self checkCards];
     }
     return self;
 }
